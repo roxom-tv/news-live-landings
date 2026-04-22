@@ -142,11 +142,18 @@ export const startLiveLanding = async (topic: string, onStage?: PipelineStageRep
   let content = draft.content;
   await reportStage(onStage, "critic_review", "Checking sourcing, wording, visuals, and publication readiness.");
   let critic = await runCritic(content, draft.id);
+  let repairFailureReason: string | null = null;
 
   for (let attempt = 0; !critic.approved && critic.severity === "changes_requested" && attempt < maxCriticRepairAttempts; attempt += 1) {
     await reportStage(onStage, "repairing", `Critic requested changes. Autonomous repair attempt ${attempt + 1}/${maxCriticRepairAttempts}.`);
-    content = await runDesignerRevision(content, critic, research);
-    critic = await runCritic(content, draft.id);
+    try {
+      content = await runDesignerRevision(content, critic, research);
+      critic = await runCritic(content, draft.id);
+    } catch (error) {
+      repairFailureReason = error instanceof Error ? error.message : String(error);
+      await reportStage(onStage, "repair_recovered", `Repair hit a transient error and will publish a conservative sourced brief: ${repairFailureReason}`);
+      break;
+    }
   }
 
   if (!critic.approved && critic.severity === "blocked") {
@@ -172,7 +179,7 @@ export const startLiveLanding = async (topic: string, onStage?: PipelineStageRep
 
   if (!critic.approved) {
     await reportStage(onStage, "publishing_safe_brief", "Publishing conservative sourced version after repair attempts.");
-    const safeContent = safeBriefContent({ base: content, writing, slug, topic, reason: critic.summary });
+    const safeContent = safeBriefContent({ base: content, writing, slug, topic, reason: repairFailureReason ?? critic.summary });
     return updateLandingContent(draft.id, safeContent, "live");
   }
 
