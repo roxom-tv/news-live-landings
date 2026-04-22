@@ -220,6 +220,21 @@ export const summarizeTokenUsageSince = (createdAtIso: string): TokenUsageSummar
   };
 };
 
+export const summarizeAllTokenUsage = (): TokenUsageSummary & { runs: number } => {
+  const row = getDb()
+    .prepare(
+      "SELECT COUNT(*) AS runs, COALESCE(SUM(input_tokens), 0) AS inputTokens, COALESCE(SUM(output_tokens), 0) AS outputTokens, COALESCE(SUM(total_tokens), 0) AS totalTokens FROM agent_runs"
+    )
+    .get() as TokenUsageSummary & { runs: number };
+
+  return {
+    runs: Number(row.runs),
+    inputTokens: Number(row.inputTokens),
+    outputTokens: Number(row.outputTokens),
+    totalTokens: Number(row.totalTokens)
+  };
+};
+
 export const recordLiveCycle = (landingId: number, materiality: string, deltaHash: string, criticResult: unknown) => {
   getDb().prepare(`
     INSERT INTO live_cycles (landing_id, materiality, delta_hash, critic_result, created_at)
