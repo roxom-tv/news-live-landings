@@ -1,4 +1,6 @@
 :root {
+  --font-display: "Space Grotesk", "Work Sans", "Arial Narrow", system-ui, sans-serif;
+  --font-body: "Work Sans", "Segoe UI", system-ui, sans-serif;
   --surface: #121414;
   --surface-lowest: #0d0e0e;
   --surface-low: #1b1c1c;
