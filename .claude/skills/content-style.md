@@ -1,14 +1,14 @@
 \---
 
-name: roxom-content-style
+name: live-news-content-style
 
-description: defines how Roxom TV writes headlines, subheadlines, summaries, and body content for the landing page — use this skill before writing or evaluating any text that will be published on the Roxom TV landing page
+description: defines how live news writes headlines, subheadlines, summaries, and body content for the landing page — use this skill before writing or evaluating any text that will be published on the live news landing page
 
 \---
 
 
 
-\# Roxom TV content style
+\# live news content style
 
 
 
@@ -198,7 +198,7 @@ Examples:
 
 \- Never use exclamation marks in news headlines
 
-\- Every piece of text on the landing page must pass both the credibility test and the click test — if it would embarrass Roxom TV as an international outlet, rewrite it
+\- Every piece of text on the landing page must pass both the credibility test and the click test — if it would embarrass live news as an international outlet, rewrite it
 
 \## TV mode copy style \(16:9 no-scroll\)
 

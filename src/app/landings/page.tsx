@@ -11,7 +11,7 @@ export default function LandingsIndexPage() {
   return (
     <main className={styles.index}>
       <section className={styles.hero}>
-        <p>Roxom TV Live Pipeline</p>
+        <p>News Landing Pipeline</p>
         <h1>Live landings generated from Telegram</h1>
         <span>Final URLs publish under /landings/[landingname]</span>
       </section>

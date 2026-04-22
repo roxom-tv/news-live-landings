@@ -33,14 +33,14 @@ ${JSON.stringify(research)}
 `,
     fallback: () => ({
       headline: `${research.topic} Becomes The Signal Markets Cannot Ignore`,
-      subheadline: "A live Roxom TV brief tracks verified facts, market context, and material updates as the story develops.",
+      subheadline: "A live news brief tracks verified facts, context, and material updates as the story develops.",
       summary: research.facts.join(" "),
       sections: [
         {
           id: "live-brief",
           eyebrow: "Live Brief",
           title: "The current signal",
-          body: research.facts[0] ?? `Roxom TV is monitoring ${research.topic}.`,
+          body: research.facts[0] ?? `The live news pipeline is monitoring ${research.topic}.`,
           visualHint: "svg"
         },
         {
@@ -61,7 +61,7 @@ ${JSON.stringify(research)}
       quotes: [
         {
           quote: "Every material update must be verified before it changes the public page.",
-          attribution: "Roxom TV Critic Gate",
+          attribution: "News Landing Critic Gate",
           sourceUrl: research.sources[0]?.url ?? "https://diegodella.ar/landings"
         }
       ],

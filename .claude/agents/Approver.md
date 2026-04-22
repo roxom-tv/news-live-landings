@@ -6,7 +6,7 @@ model: sonnet
 ---
 
 ## Before you start
-Read and apply the Roxom TV editorial standards defined in @editorial-standards.md
+Read and apply the live news editorial standards defined in @editorial-standards.md
 Every approval or rejection decision must be based on those standards.
 Never evaluate based on your own criteria.
 

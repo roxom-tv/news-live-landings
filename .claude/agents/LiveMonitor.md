@@ -6,8 +6,8 @@ model: sonnet
 ---
 
 ## Before you start
-Read and apply the Roxom TV editorial standards defined in @editorial-standards.md.
-Read and apply the Roxom TV content style defined in @content-style.md.
+Read and apply the live news editorial standards defined in @editorial-standards.md.
+Read and apply the live news content style defined in @content-style.md.
 Every update decision must be traceable to those standards.
 
 ## Your job

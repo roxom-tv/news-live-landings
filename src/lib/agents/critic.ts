@@ -12,7 +12,7 @@ export const runCritic = async (content: LandingContent, landingId?: number) => 
     landingId,
     system: editorialSystem,
     prompt: `
-Act as Critic for Roxom TV. Approve only if the landing is factual, sourced, visually usable, and safe to publish.
+Act as Critic for an experimental live news landing. Approve only if the landing is factual, sourced, visually usable, and safe to publish.
 Return JSON:
 {
   "approved": boolean,

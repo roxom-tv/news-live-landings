@@ -7,7 +7,7 @@ export const env = {
   telegramWebhookSecret: process.env.TELEGRAM_WEBHOOK_SECRET ?? "",
   finalUrlBase: process.env.FINAL_URL_BASE ?? "https://diegodella.ar/landings",
   landingsIndexUrl: process.env.LANDINGS_INDEX_URL ?? "https://diegodella.ar/landings",
-  databaseUrl: process.env.DATABASE_URL ?? "file:/tmp/roxom-live-dev.db",
+  databaseUrl: process.env.DATABASE_URL ?? "file:/tmp/news-live-dev.db",
   liveCycleMinutes: Number(process.env.LIVE_CYCLE_MINUTES ?? "30"),
   internalCronSecret: process.env.INTERNAL_CRON_SECRET ?? "",
   pipelineEnv: process.env.PIPELINE_ENV ?? "dev"

@@ -1,8 +1,8 @@
 .shell {
   position: relative;
   min-height: 100vh;
-  overflow: hidden;
-  padding: var(--safe-area);
+  overflow-x: hidden;
+  padding: clamp(20px, 3vw, var(--safe-area));
 }
 
 .parallaxGrid {
@@ -28,20 +28,21 @@
 .hero {
   display: grid;
   grid-template-columns: minmax(0, 1.35fr) minmax(280px, 0.65fr);
-  gap: 32px;
-  align-items: center;
-  min-height: min(760px, calc(100vh - 64px));
+  gap: clamp(20px, 3vw, 32px);
+  align-items: start;
+  min-height: auto;
   max-width: 1240px;
   margin: 0 auto;
+  padding: clamp(48px, 7vw, 88px) 0 clamp(28px, 4vw, 52px);
 }
 
 .heroCopy h1 {
   max-width: 980px;
   margin: 18px 0;
   font-family: var(--font-display), sans-serif;
-  font-size: clamp(48px, 8vw, 112px);
-  line-height: 0.95;
-  letter-spacing: -0.04em;
+  font-size: clamp(42px, 6vw, 76px);
+  line-height: 1;
+  letter-spacing: 0;
   text-transform: uppercase;
   text-shadow: 0 0 28px rgba(255, 81, 103, 0.22);
 }
@@ -49,7 +50,7 @@
 .heroCopy p {
   max-width: 720px;
   color: rgba(227, 226, 226, 0.78);
-  font-size: clamp(18px, 2vw, 24px);
+  font-size: clamp(17px, 1.6vw, 21px);
   line-height: 1.45;
 }
 
@@ -79,8 +80,8 @@
   width: 9px;
   height: 9px;
   border-radius: 50%;
-  background: var(--roxom-green);
-  box-shadow: 0 0 16px var(--roxom-green);
+  background: var(--signal-green);
+  box-shadow: 0 0 16px var(--signal-green);
   animation: pulse 1.4s infinite;
 }
 
@@ -88,7 +89,7 @@
   display: flex;
   flex-wrap: wrap;
   gap: 12px;
-  margin-top: 28px;
+  margin-top: 22px;
   color: var(--tertiary);
 }
 
@@ -106,13 +107,13 @@
 }
 
 .signalPanel {
-  padding: 24px;
+  padding: clamp(18px, 2vw, 24px);
   border-radius: 8px;
 }
 
 .panelLabel {
   color: var(--primary);
-  margin-bottom: 24px;
+  margin-bottom: 16px;
 }
 
 .dataRow {
@@ -120,14 +121,14 @@
   grid-template-columns: 110px 1fr;
   gap: 16px;
   align-items: baseline;
-  padding: 18px 0;
+  padding: 14px 0;
   border-top: 1px solid rgba(255, 255, 255, 0.08);
 }
 
 .dataRow strong {
   color: var(--tertiary);
   font-family: var(--font-display), sans-serif;
-  font-size: 32px;
+  font-size: clamp(24px, 3vw, 32px);
 }
 
 .dataRow span {
@@ -136,7 +137,7 @@
 
 .ticker {
   max-width: 1240px;
-  margin: -20px auto 56px;
+  margin: 0 auto 32px;
   overflow: hidden;
   color: var(--surface-lowest);
   background: var(--primary-hot);
@@ -162,16 +163,16 @@
 
 .sections {
   display: grid;
-  gap: 24px;
+  gap: 18px;
 }
 
 .card {
   display: grid;
   grid-template-columns: minmax(0, 1fr) 220px;
-  gap: 24px;
+  gap: clamp(18px, 2vw, 24px);
   align-items: stretch;
-  min-height: 260px;
-  padding: 28px;
+  min-height: 0;
+  padding: clamp(20px, 2.5vw, 28px);
   border-radius: 8px;
 }
 
@@ -184,9 +185,9 @@
 .updates h2 {
   margin: 12px 0;
   font-family: var(--font-display), sans-serif;
-  font-size: clamp(28px, 4vw, 52px);
-  line-height: 1;
-  letter-spacing: -0.03em;
+  font-size: clamp(24px, 3vw, 40px);
+  line-height: 1.08;
+  letter-spacing: 0;
   text-transform: uppercase;
 }
 
@@ -194,14 +195,14 @@
 .quote p,
 .updates p {
   color: rgba(227, 226, 226, 0.78);
-  font-size: 18px;
-  line-height: 1.65;
+  font-size: 17px;
+  line-height: 1.55;
 }
 
 .visualTile {
   display: grid;
   place-items: center;
-  min-height: 190px;
+  min-height: 150px;
   color: var(--tertiary);
   border: 1px solid rgba(255, 179, 181, 0.5);
   background:
@@ -217,13 +218,13 @@
   display: grid;
   grid-template-columns: minmax(0, 0.9fr) minmax(280px, 0.7fr);
   gap: 24px;
-  margin-top: 24px;
+  margin-top: 18px;
 }
 
 .quote,
 .sources,
 .updates {
-  padding: 28px;
+  padding: clamp(20px, 2.5vw, 28px);
   border-radius: 8px;
 }
 
@@ -231,8 +232,8 @@
   margin-top: 0;
   color: white;
   font-family: var(--font-display), sans-serif;
-  font-size: clamp(24px, 3vw, 42px);
-  line-height: 1.12;
+  font-size: clamp(22px, 2.4vw, 34px);
+  line-height: 1.18;
 }
 
 .quote cite {
@@ -264,7 +265,7 @@
 }
 
 .updates {
-  margin-top: 24px;
+  margin-top: 18px;
 }
 
 .updates div {

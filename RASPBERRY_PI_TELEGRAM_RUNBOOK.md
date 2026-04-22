@@ -23,7 +23,7 @@ Use `COOLIFY_MVP_RUNBOOK.md` as the primary deployment guide.
 - `LANDINGS_INDEX_URL=https://diegodella.ar/landings`
 
 Store these in a root-owned env file, example:
-- `/etc/roxom-live/roxom-live.env`
+- `/etc/news-live/news-live.env`
 
 ## 3) Telegram command contract
 - `/start_live <topic>`
@@ -50,19 +50,19 @@ Must notify Telegram on:
 ## 5) Service model
 Run as systemd service with restart policy.
 
-Example unit (`/etc/systemd/system/roxom-live.service`):
+Example unit (`/etc/systemd/system/news-live.service`):
 
 ```ini
 [Unit]
-Description=Roxom Live Pipeline
+Description=live news Live Pipeline
 After=network-online.target
 Wants=network-online.target
 
 [Service]
 Type=simple
 User=pi
-WorkingDirectory=/opt/roxom-live
-EnvironmentFile=/etc/roxom-live/roxom-live.env
+WorkingDirectory=/opt/news-live
+EnvironmentFile=/etc/news-live/news-live.env
 ExecStart=/usr/bin/env bash -lc 'node ./runner/live-pipeline.js'
 Restart=always
 RestartSec=5
@@ -76,9 +76,9 @@ Then:
 
 ```bash
 sudo systemctl daemon-reload
-sudo systemctl enable roxom-live
-sudo systemctl start roxom-live
-sudo systemctl status roxom-live
+sudo systemctl enable news-live
+sudo systemctl start news-live
+sudo systemctl status news-live
 ```
 
 ## Quick start after copying to Raspberry Pi
@@ -88,14 +88,14 @@ From project root:
 ```bash
 chmod +x ./scripts/raspberry_install.sh ./scripts/raspberry_start.sh
 ./scripts/raspberry_install.sh
-sudo nano /etc/roxom-live/roxom-live.env
+sudo nano /etc/news-live/news-live.env
 ./scripts/raspberry_start.sh
 ```
 
 If the service starts correctly, tail logs with:
 
 ```bash
-journalctl -u roxom-live -f
+journalctl -u news-live -f
 ```
 
 ## 6) Scheduler behavior
@@ -114,7 +114,7 @@ Persist at minimum:
 - final URL (once available)
 
 Recommended storage:
-- SQLite or JSON file under `/var/lib/roxom-live/`
+- SQLite or JSON file under `/var/lib/news-live/`
 
 ## 8) Health and observability
 - Heartbeat every cycle to Telegram in compact format (`OK` + timestamp)
@@ -122,7 +122,7 @@ Recommended storage:
 - Use journal logs:
 
 ```bash
-journalctl -u roxom-live -f
+journalctl -u news-live -f
 ```
 
 ## 9) Final URL policy

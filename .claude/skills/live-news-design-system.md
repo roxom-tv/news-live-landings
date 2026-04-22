@@ -1,5 +1,5 @@
 ---
-name: Roxom TV Miami
+name: live news Miami
 colors:
   surface: '#121414'
   surface-dim: '#121414'
@@ -116,7 +116,7 @@ The color palette is built on a foundation of absolute darkness to allow neon ac
 - **Primary (Hot Pink):** Used for urgent news, critical CTAs, and active states.
 - **Secondary (Neon Purple):** Used for structural accents, secondary buttons, and depth-giving shadows.
 - **Tertiary (Bright Cyan):** Used for informational data points, links, and "safe" interactions.
-- **Roxom Green:** Reserved exclusively for success states, market gains, and brand-specific "on-air" indicators.
+- **live news Green:** Reserved exclusively for success states, market gains, and brand-specific "on-air" indicators.
 
 "Clashy" balance is achieved by pairing Cyan and Pink in gradients or adjacent borders, creating a visual vibration typical of 80s broadcast graphics.
 
@@ -161,7 +161,7 @@ Cards are the primary container for news stories. They feature a semi-transparen
 
 ### News Tickers
 
-A signature component of this design system. A full-width bar at the bottom or top of the screen with a Hot Pink background and Roxom Green text scrolling horizontally.
+A signature component of this design system. A full-width bar at the bottom or top of the screen with a Hot Pink background and live news Green text scrolling horizontally.
 
 ### Multi-Colored Borders
 
@@ -169,4 +169,4 @@ Input fields and featured cards use a "dual-stroke" technique--a primary color b
 
 ### Chips & Badges
 
-Small, high-saturation pills. "Live" indicators must use a pulsing animation with Roxom Green and a heavy glow. Category chips use "clashy" pastel combinations like a pale yellow text on a bright purple glass background.
+Small, high-saturation pills. "Live" indicators must use a pulsing animation with live news Green and a heavy glow. Category chips use "clashy" pastel combinations like a pale yellow text on a bright purple glass background.

@@ -1,9 +1,9 @@
 ---
-name: roxom-editorial-standards
-description: defines what Roxom TV covers and what it rejects, including topic priorities, the 80/20 editorial balance, breaking news criteria, and approval and rejection rules — use this skill before making any editorial decision
+name: live-news-editorial-standards
+description: defines what live news covers and what it rejects, including topic priorities, the 80/20 editorial balance, breaking news criteria, and approval and rejection rules — use this skill before making any editorial decision
 ---
 
-# Roxom TV editorial standards
+# live news editorial standards
 
 ## Editorial balance
 - 80% Major World News: politics, geopolitics, war and conflict, global economy, science, technology, significant social trends

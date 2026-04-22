@@ -11,7 +11,7 @@ export const runDesigner = (topic: string, research: ResearchOutput, writing: Wr
     agent: "designer",
     system: miamiDesignSystem,
     prompt: `
-Create Roxom TV Miami structured landing JSON. Do not generate React code.
+Create structured live news landing JSON. Do not generate React code.
 Use this exact JSON shape:
 {
   "slug": string,
@@ -46,7 +46,7 @@ Writing: ${JSON.stringify(writing)}
         {
           type: "svg",
           title: research.visualDirections[0] ?? "Neon broadcast grid",
-          credit: "Generated visual direction / Roxom TV",
+          credit: "Generated visual direction",
           alt: "Abstract Miami neon broadcast grid"
         } satisfies VisualAsset
       ],

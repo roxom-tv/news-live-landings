@@ -44,7 +44,7 @@ const assertAllowedChat = (chatId: string | number) => {
 };
 
 const helpText = () => [
-  "Roxom live landing commands:",
+  "Live news landing commands:",
   "/start_live <topic>",
   "/status <slug_or_topic>",
   "/force_update <slug_or_topic>",

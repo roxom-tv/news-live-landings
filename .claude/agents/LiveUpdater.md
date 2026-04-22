@@ -9,7 +9,7 @@ model: sonnet
 Read and apply:
 - @editorial-standards.md
 - @content-style.md
-- @roxomtv-design-system.md
+- @live-news-design-system.md
 All updates must preserve those standards.
 
 ## Your job

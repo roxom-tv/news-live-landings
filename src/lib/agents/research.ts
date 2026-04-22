@@ -16,7 +16,7 @@ export const runResearch = (topic: string) =>
     system: editorialSystem,
     useWebSearch: true,
     prompt: `
-Research this live Roxom TV landing topic: "${topic}".
+Research this live news landing topic: "${topic}".
 Use current web sources. Prefer Reuters, AP, Bloomberg, BBC, NYT, FT, WSJ, CNBC, CoinDesk when relevant.
 Return JSON:
 {
@@ -30,7 +30,7 @@ Minimum two credible sources. No unsupported claims.
     fallback: () => ({
       topic,
       facts: [
-        `Roxom TV is tracking ${topic} as a live story.`,
+        `This pipeline is tracking ${topic} as a live story.`,
         "The MVP requires at least two credible sources before production publishing.",
         "Updates are only published after Critic approval."
       ],

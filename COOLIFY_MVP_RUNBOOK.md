@@ -1,6 +1,6 @@
 # Coolify MVP Runbook
 
-This app is the MVP runtime for Telegram-operated Roxom TV live landings.
+This app is the MVP runtime for Telegram-operated live news landings.
 
 ## What It Runs
 
@@ -32,7 +32,7 @@ TELEGRAM_CHAT_ID=
 TELEGRAM_WEBHOOK_SECRET=
 FINAL_URL_BASE=https://diegodella.ar/landings
 LANDINGS_INDEX_URL=https://diegodella.ar/landings
-DATABASE_URL=file:/data/roxom-live.db
+DATABASE_URL=file:/data/news-live.db
 LIVE_CYCLE_MINUTES=30
 PIPELINE_ENV=prod
 INTERNAL_CRON_SECRET=

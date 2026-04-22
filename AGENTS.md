@@ -10,7 +10,7 @@ This file provides guidance to Codex and other coding agents when working in thi
 
 ## Who I Am
 
-I am the **main orchestrator** for Diego's Roxom TV workspace. My job is to understand what is needed, plan the approach, delegate each task to the right specialized agent, integrate the results, and present them clearly to Diego.
+I am the **main orchestrator** for Diego's live news workspace. My job is to understand what is needed, plan the approach, delegate each task to the right specialized agent, integrate the results, and present them clearly to Diego.
 
 ## How I Communicate
 
@@ -131,28 +131,24 @@ I am the **main orchestrator** for Diego's Roxom TV workspace. My job is to unde
 
 ## Project Context
 
-### About Roxom TV
+### About This Experiment
 
-Roxom TV is Roxom's Bitcoin-native streaming and media platform, based in El Salvador. It provides real-time market signals, macro insights, market intelligence, live shows, market analysis, and financial data such as BTC prices, stocks, indexes, and news.
+This workspace builds an agnostic live news landing generator. It creates public, source-backed landing pages from Telegram commands, monitors active stories on a 30-minute cycle, and only publishes material changes after Critic approval.
 
 ### Projects
 
 | Project | Path | Stack | Description |
 |----------|------|-------|-------------|
-| **roxom-tv-pwa** | `./roxom-tv-pwa/` | HTML/CSS/JS vanilla, Firebase Auth, OneSignal, HLS.js | Main PWA deployed on Vercel |
-| **PWA - Roxom TV** | `./PWA - Roxom TV/` | Same PWA + docs | Development version with documentation |
-| **Roxom TV Website** | `./Roxom TV Website/` | React + Vite | Roxom TV website/landing |
+| **news-live-landings** | `./` | Next.js App Router, SQLite, Telegram webhook, Coolify | MVP live news landing generator |
 
 ### Technical Stack
 
-- **PWA:** HTML/CSS/JS vanilla, no framework
-- **Website:** React 18 + Vite 5
-- **Auth:** Firebase Auth
-- **Push notifications:** OneSignal
-- **Video streaming:** HLS.js
-- **Deploy:** Vercel
+- **App:** Next.js App Router
+- **Storage:** SQLite
+- **Remote control:** Telegram webhook
+- **Deploy:** Coolify on Raspberry Pi, exposed at `https://diegodella.ar/landings`
 - **Fonts:** Space Grotesk for headlines/labels, Work Sans for body copy
-- **Theme:** Roxom TV Miami: dark retro-futurist broadcast UI, neon glassmorphism, hot pink / neon purple / bright cyan accents
+- **Theme:** dark retro-futurist broadcast UI, neon glassmorphism, hot pink / neon purple / bright cyan accents
 - **Styling:** Vanilla CSS with custom properties — NO TailwindCSS
 
 ---
@@ -161,12 +157,10 @@ Roxom TV is Roxom's Bitcoin-native streaming and media platform, based in El Sal
 
 Pass this context to any agent working with Figma or implementing UI:
 
-### Figma Design System
+### Design System
 
-- **File:** [Roxom TV - Website DS](https://www.figma.com/design/3UFJCOT08v6d3ejJLqvsDc/Website---Ready-for-deploy?node-id=1060-3393)
-  - File Key: `3UFJCOT08v6d3ejJLqvsDc`
-  - Root Node: `1060:3393`
-- Code Connect: `clientFrameworks: "react"`, `clientLanguages: "javascript,css"`, `label: "React"`
+- Use the local live news design guidance unless Diego provides a specific Figma source.
+- If Figma is provided, extract file key and node ID from the URL and validate against screenshots before implementation.
 
 ### Figma URL Parsing
 
@@ -175,15 +169,15 @@ Pass this context to any agent working with Figma or implementing UI:
 - `nodeId` = the `node-id` parameter, with `-` converted to `:`
 - FigJam: `https://figma.com/board/:fileKey/:fileName`
 
-### Roxom TV Miami Style (Design Direction)
+### live news Style (Design Direction)
 
-Roxom TV uses a high-energy 80s Miami broadcast-news style, reimagined as a modern digital interface:
+Use a high-energy 80s Miami broadcast-news style, reimagined as a modern digital interface:
 
 - Retro-futurism plus glassmorphism: neon light leaks, glowing edges, translucent tinted glass.
 - Primary accent: Hot Pink (`#ffb3b5`) for urgent news, critical CTAs, and active states.
 - Secondary accent: Neon Purple (`#e9b3ff`) for structural accents, secondary actions, and depth.
 - Tertiary accent: Bright Cyan (`#74d1ff`) for data points, links, and informational states.
-- Roxom Green is reserved for success states, market gains, and brand-specific on-air indicators.
+- Signal Green is reserved for success states, market gains, and live indicators.
 - Use 8px spacing rhythm, 12-column layouts, and generous broadcast-style safe areas.
 - Use glass cards with 10-20% cyan/purple opacity, `backdrop-filter: blur(20px)`, dual-color borders, and low-opacity neon diffusion.
 - Buttons and breaking badges should be pill-shaped; most containers use a 4px radius.

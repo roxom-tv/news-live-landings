@@ -7,7 +7,7 @@ model: sonnet
 
 ## Before you start
 Read and apply:
-- @roxomtv-design-system.md
+- @live-news-design-system.md
 - @content-style.md
 - @editorial-standards.md
 

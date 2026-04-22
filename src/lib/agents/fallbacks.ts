@@ -22,8 +22,8 @@ export const fallbackLanding = (topic: string, slug = slugify(topic)): LandingCo
   slug,
   topic,
   headline: `${topic} Becomes The Signal Markets Cannot Ignore`,
-  subheadline: "Roxom TV is tracking the story live with verified sources, market context, and broadcast-ready updates.",
-  summary: `A live Roxom TV landing for ${topic}, prepared with sourced context, visual hierarchy, and a 30-minute update loop.`,
+  subheadline: "This live brief tracks the story with verified sources, context, and broadcast-ready updates.",
+  summary: `A live news landing for ${topic}, prepared with sourced context, visual hierarchy, and a 30-minute update loop.`,
   status: "drafting",
   lastUpdatedUtc: now(),
   sources: fallbackSources(topic),
@@ -31,7 +31,7 @@ export const fallbackLanding = (topic: string, slug = slugify(topic)): LandingCo
     {
       type: "svg",
       title: "Miami neon market signal field",
-      credit: "Generated visual system / Roxom TV",
+      credit: "Generated visual system",
       alt: "Abstract neon broadcast grid with market signal lines"
     }
   ],
@@ -61,7 +61,7 @@ export const fallbackLanding = (topic: string, slug = slugify(topic)): LandingCo
   quotes: [
     {
       quote: "Live updates should change the page only when the facts materially change.",
-      attribution: "Roxom TV Pipeline Standard",
+      attribution: "News Landing Pipeline Standard",
       sourceUrl: "https://diegodella.ar/landings"
     }
   ],
