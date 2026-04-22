@@ -11,7 +11,8 @@ Design direction: dark financial-news editorial page inspired by modern crypto/g
 Style: full-bleed photographic hero, article-first reading flow, data-rich sections, source transparency, no brand-specific TV styling.
 Palette: near-black #060707 base, deep surface #191919, vivid green #1ae784 accent, red only for breaking/critical states, white text, muted white metadata.
 Typography: DM Sans for headlines/body, JetBrains Mono for metadata/source labels/numbers.
-Layout: sticky simple masthead, full-screen hero with dark gradient, long-form article body, inline images, timeline, quote cards, data/stat cards, reactions/source cards, gallery, footer sources.
+Layout: sticky simple masthead, full-screen hero with dark gradient, long-form article body, inline images, timeline, quote cards, data/stat cards, reactions/source cards, gallery, and a complete bottom bibliography.
 Motion: subtle fade-up and optional scanline only. Do not use auto-scroll, carousels, horizontal story panning, neon-purple styling, or generic card-only layouts.
-Every visible factual content block must preserve source URLs from the research package.
+Every visible factual content block must preserve source URLs from the research package. Sources must appear inline and in the final bibliography.
+Topic-aware editorial depth is mandatory: competitions need competitors/status/results/stakes; elections need results/outcomes/party statements; market stories need prices/moves/catalysts; person stories need current relevance and critics/supporters; crises need timeline/impact/official statements.
 `;

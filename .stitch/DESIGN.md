@@ -38,7 +38,7 @@ No purple, no blue gradients, no beige palette, no neon TV glow. Green is sharp 
 6. **Data & Impact:** Green-tinted band, stat cards, and at least one chart-like visual when source data exists.
 7. **Reactions:** Source/actor cards showing who said or reported what.
 8. **Gallery:** 4-column image grid on desktop, 2-column on mobile.
-9. **Footer Sources:** Bottom source summary with publication/update context.
+9. **Footer Sources:** Complete bottom bibliography with linked source titles, outlets, dates, credibility, and publication/update context.
 
 ## 5. Topic-Aware Treatment
 
@@ -46,6 +46,8 @@ No purple, no blue gradients, no beige palette, no neon TV glow. Green is sharp 
 - **Event/Crisis:** scene-first hero, timeline is essential, quotes and reactions should be prominent.
 - **Market/Crypto/Finance:** data/stat section must be strong, include chart visuals and market reaction cards.
 - **Institution/Company:** hero can use building, product, logo-adjacent source image, or relevant operation visual; emphasize actors and data.
+- **Competition/Rivalry:** show competitors, status/standings/result, stakes, leaders/losers, momentum shifts, relevant quotes, and next milestone.
+- **Election/Vote:** show reported results, vote share/seats/delegates/electoral count where relevant, winners/losers, turnout or reporting status, challenges, party statements, and next procedural step.
 
 ## 6. Motion & Interaction
 
@@ -58,6 +60,7 @@ Use restrained fade-up and optional scanline effect. No carousel, no auto-scroll
 - Every factual section carries source URLs.
 - Use exact quotes only when supported; otherwise use reactions/source cards.
 - Sources appear inline and at the bottom.
+- Bottom sources are not optional. The article must end with a bibliography-style source section, not just outlet names.
 - Do not fabricate images, quotes, numbers, or dates.
 - Use fallback images only when they are topically relevant and properly credited.
 - Content is king, context is queen, update is prince: article substance first, explanatory context second, live-update mechanics third.

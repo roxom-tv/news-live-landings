@@ -283,10 +283,41 @@ export function LandingRenderer({ content }: { content: LandingContent }) {
         </section>
       )}
 
+      <section className={styles.sourcesSection} aria-label="Sources">
+        <div className={styles.containerWide}>
+          <div className={styles.sectionLabel}>
+            <span>Sources</span>
+            <i aria-hidden="true" />
+          </div>
+          <div className={styles.sourcesIntro}>
+            <p>
+              This landing is built from source-bound reporting. Each article section links to the sources
+              used for its claims; the full source list is collected here for review.
+            </p>
+            <span>{content.sources.length} sources · Updated {new Date(content.lastUpdatedUtc).toLocaleString()}</span>
+          </div>
+          <ol className={styles.sourcesList}>
+            {content.sources.map((source, index) => (
+              <li key={source.url}>
+                <a href={source.url} target="_blank" rel="noreferrer">
+                  <span>{String(index + 1).padStart(2, "0")}</span>
+                  <strong>{source.title}</strong>
+                  <small>
+                    {source.outlet}
+                    {source.publishedAt ? ` · ${source.publishedAt}` : ""}
+                    {source.credibility ? ` · ${source.credibility}` : ""}
+                  </small>
+                </a>
+              </li>
+            ))}
+          </ol>
+        </div>
+      </section>
+
       <footer className={styles.footer}>
         <p>
-          <strong>Live News Landings</strong> · Updated {new Date(content.lastUpdatedUtc).toLocaleString()} · Sources:{" "}
-          {content.sources.map(source => source.outlet).join(", ")}
+          <strong>Live News Landings</strong> · Updated {new Date(content.lastUpdatedUtc).toLocaleString()} ·{" "}
+          {content.sections.length} story sections · {content.dataPoints.length} sourced data points
         </p>
       </footer>
     </main>

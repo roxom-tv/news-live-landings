@@ -51,6 +51,13 @@ Use current web sources. Prefer AP, Reuters, Google News results, Bloomberg, BBC
 Every fact must be source-bound. Do not include a claim unless it has a sourceUrl from the returned sources list.
 Find more than a headline: gather chronology, actors, numbers, official statements, market/geopolitical context, human stakes, power dynamics, social/market reactions, visual scene details, and what to watch next.
 Collect enough detail to support a long-form magazine/news article, not a short dossier.
+Topic-specific reporting requirements:
+- If the topic is a competition, tournament, race, league, award, trial, or product/market rivalry: gather competitors, standings/status, leaders, losers, score/result, rules or stakes, next milestone, and quotes/reactions from key competitors or organizers.
+- If the topic is an election or vote: gather current results, vote shares, seats/delegates/electoral count, turnout, key outcomes, winners/losers, legal challenges, concession/victory statements, and quotes from relevant parties.
+- If the topic is markets/crypto/economy: gather price levels, percentage moves, flows, volumes, historical comparison, catalysts, winners/losers, analyst/institutional reactions, and next macro/event risk.
+- If the topic is a person: gather biography only where relevant, current role/status, controversy or achievement, key relationships, direct quotes, critics/supporters, and what changed now.
+- If the topic is an event/crisis: gather timeline, affected parties, geography, casualties/financial impact where relevant, official statements, disputed claims, and what happens next.
+Search specifically for exact quotes from relevant parties. Include only exact quotes that appear in source material; otherwise gather paraphrased reactions as source-bound facts.
 Image collection is mandatory when available. Collect photographic image candidates only when the image URL is directly associated with a returned source, such as a source article OpenGraph image, press image, company/government media image, or media kit image. Prefer large landscape images. Do not use icons, logos, avatars, trackers, base64 data URLs, SVGs, or unrelated stock images.
 For every imageCandidate, explain why it is relevant to the story. Use relevance "direct" only for images from an article/source about the exact story, "contextual" for a known person/place/institution/entity in the story, and "fallback" only when no direct/contextual image exists.
 Return JSON:
@@ -61,7 +68,7 @@ Return JSON:
   "imageCandidates": [{"url": string, "title": string, "credit": string, "alt": string, "sourceUrl": string, "relevance": "direct"|"contextual"|"fallback", "relevanceReason": string}],
   "visualDirections": string[]
 }
-Minimum six credible sources when available. Minimum sixteen source-bound facts when available. No unsupported claims.
+Minimum eight credible sources when available. Minimum twenty source-bound facts when available. No unsupported claims.
 `,
     fallback: () => {
       const sources = fallbackSources(topic);

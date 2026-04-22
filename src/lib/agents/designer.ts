@@ -76,6 +76,12 @@ Stitch design requirements:
 - Do not produce a card-grid landing or compact dossier. The main experience is a readable long-form article with strong narrative pacing and inline visuals.
 - Use vivid green #1ae784 as the main accent and red only for live/breaking/critical states.
 - It must feel like a Vice-style news feature: immersive, image-led, edgy but credible, human and specific, with sources visible but not dominating the reading experience.
+- Build topic-specific journalism into the structure, not generic blocks:
+  - competition/rivalry pages need competitors, status/standings/result, stakes, momentum shifts, quotes/reactions, and next milestone.
+  - election/vote pages need results, vote share/seats/delegates, winners/losers, turnout or reporting status, challenges, party statements, and next procedural step.
+  - market/crypto/economy pages need current levels, move size, catalysts, comparison, flows/volume when sourced, winners/losers, reactions, and next catalyst.
+  - person pages need current relevance first, then biography/context, allies/critics, controversies/achievements, quotes, and what changes next.
+  - event/crisis pages need timeline, geography, affected parties, impact, official statements, disputed claims, and what happens next.
 - Choose the layout from the topic:
   - person-profile: one dominant person, founder, executive, politician, athlete, artist, or suspect. Use face/portrait imagery as the main experience.
   - event-brief: event, conflict, hearing, lawsuit, launch, accident, speech, policy decision, or breaking incident. Use scene/context imagery and timeline structure.
@@ -91,6 +97,7 @@ Stitch design requirements:
 - Avoid the old neon TV/broadcast look.
 - Keep hero text tight: headline plus 1-2 sentence subheadline. Put detail into sections.
 - Use modular React-friendly regions: Hero, Article, Timeline, Quotes, Data/Impact, Reactions, Gallery, Footer Sources.
+- The landing must end with a complete source bibliography. Inline source tags are required, but the full source list belongs at the bottom.
 - Do not add any factual claim not present in Writing or Research.
 - Preserve sourceUrls on every section.
 Images: ${JSON.stringify(research.imageCandidates)}
@@ -152,6 +159,7 @@ Rules:
 - Keep at least 5 sections when the source material supports it.
 - Preserve source-associated image visuals from Research whenever imageCandidates are available.
 - Use a premium editorial one-page layout. Do not use auto-scroll, carousels, ticker motion, or TV-slide language.
+- Keep or add topic-specific reporting depth: competitors/status/results for competitions, results/outcomes for elections, quotes from relevant parties when exact source text exists, and full source bibliography at the end.
 - Use safe, neutral wording. Do not overstate legal claims as fact.
 - Preserve or improve designSpec using the Stitch design system.
 - Set "status" to "critic_review".
