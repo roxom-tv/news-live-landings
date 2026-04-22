@@ -16,7 +16,7 @@ import { runResearch } from "./agents/research";
 import { runWriter, type WriterOutput } from "./agents/writer";
 import type { LandingContent, LandingRecord } from "./types";
 
-const retryableStatuses = new Set(["blocked", "cancelled", "failed"]);
+const retryableStatuses = new Set(["drafting", "critic_review", "blocked", "cancelled", "failed"]);
 const maxCriticRepairAttempts = 3;
 type PipelineStageReporter = (stage: string, detail?: string) => Promise<void> | void;
 

@@ -80,7 +80,7 @@ const findSlug = (value: string) => {
   return slugify(value);
 };
 
-const retryableStatuses = new Set(["blocked", "cancelled", "failed"]);
+const retryableStatuses = new Set(["drafting", "critic_review", "blocked", "cancelled", "failed"]);
 
 const tokenUsageMessage = (startedAt: string) => {
   const usage = summarizeTokenUsageSince(startedAt);
