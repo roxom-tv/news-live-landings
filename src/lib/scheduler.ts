@@ -7,13 +7,15 @@ let started = false;
 export const runScheduledLiveCycle = async () => {
   const results = await runAllLiveCycles();
   for (const result of results) {
-    if (result.monitor?.materiality === "IMPORTANT" || result.monitor?.materiality === "CRITICAL") {
+    if (result.updated && result.monitor) {
       await notifyTelegram(
-        `LIVE UPDATE | topic=${result.landing.topic} | materiality=${result.monitor.materiality} | updated=${result.updated} | final_url=${result.landing.finalUrl}`
+        [
+          `LIVE UPDATE PUBLISHED | topic=${result.landing.topic}`,
+          `materiality=${result.monitor.materiality}`,
+          `what_changed=${result.monitor.summary.slice(0, 900)}`,
+          `final_url=${result.landing.finalUrl}`
+        ].join(" | ")
       );
-    }
-    if (result.monitor?.materiality === "BLOCKER") {
-      await notifyTelegram(`BLOCKER | topic=${result.landing.topic} | stage=live-monitor | action_required=${result.monitor.summary}`);
     }
   }
   return results;

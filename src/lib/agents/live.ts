@@ -33,6 +33,9 @@ export const runLiveUpdater = (content: LandingContent, monitor: LiveMonitorResu
     system: editorialSystem,
     prompt: `
 Apply this verified live delta to the landing JSON. Preserve structure and source credits.
+Preserve or improve the current dark magazine/news article look: full-bleed hero, long-form article sections, inline visuals, timeline, quotes, data/impact, reactions, gallery, and source footer.
+Do not convert the landing into a compact dossier or card grid.
+Add the new facts into the relevant article sections or append a substantial update section if needed.
 Return the full updated LandingContent JSON.
 Current landing:
 ${JSON.stringify(content)}
