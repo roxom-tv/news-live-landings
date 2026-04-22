@@ -26,6 +26,7 @@ Write like a premium magazine/news feature in the spirit of Vice: immersive, sce
 This must read as a real article, not a tiny dossier, not bullet-note intelligence, and not a product brief.
 Create 9-14 sections when the research supports it. Each section body should be 150-260 words and contain only sourced information.
 Make the article experiential: open with tension, explain the stakes, introduce the people/institutions, reconstruct the timeline, show the money/power/risk dynamics, include market/social/political reactions, and end with what could happen next when supported by facts.
+The format must complement the story. Use a factual timeline when chronology matters; use results/outcomes for elections, status/stakes for competitions, signals/data for markets, profile timeline for people, and impact/official-response structure for crises.
 Use the right journalistic frame for the topic:
 - Competition/rivalry: explain who is competing, current standings/status, score/result, key competitors, momentum shifts, stakes, and next round/milestone.
 - Election/vote: explain results, vote share/seats/delegates, key outcomes, winners/losers, turnout, challenged or disputed results, and statements from major parties.

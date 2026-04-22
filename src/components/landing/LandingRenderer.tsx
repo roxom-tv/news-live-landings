@@ -17,6 +17,25 @@ const sectionDateLabel = (section: StorySection, index: number) => {
   return match?.[0] ?? `Step ${index + 1}`;
 };
 
+const contextHeading = (content: LandingContent) => {
+  switch (content.designSpec?.layout) {
+    case "market-brief":
+    case "data-dashboard":
+      return "Signals & Data";
+    case "person-profile":
+      return "Profile Timeline";
+    case "competition-brief":
+      return "Status & Stakes";
+    case "election-brief":
+      return "Results & Outcomes";
+    case "event-brief":
+    case "timeline":
+      return "Facts Timeline";
+    default:
+      return "Key Facts";
+  }
+};
+
 const termsFor = (text: string) => text.toLowerCase().split(/\W+/).filter(term => term.length > 3);
 
 const visualMatchesSection = (visual: VisualAsset | undefined, section: StorySection, content: LandingContent) => {
@@ -150,7 +169,7 @@ export function LandingRenderer({ content }: { content: LandingContent }) {
       <section className={styles.contextSection} aria-label="Timeline">
         <div className={styles.container}>
           <div className={styles.sectionLabel}>
-            <span>How We Got Here</span>
+            <span>{contextHeading(content)}</span>
             <i aria-hidden="true" />
           </div>
           <ol className={styles.timeline}>

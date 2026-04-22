@@ -51,6 +51,7 @@ Use current web sources. Prefer AP, Reuters, Google News results, Bloomberg, BBC
 Every fact must be source-bound. Do not include a claim unless it has a sourceUrl from the returned sources list.
 Find more than a headline: gather chronology, actors, numbers, official statements, market/geopolitical context, human stakes, power dynamics, social/market reactions, visual scene details, and what to watch next.
 Collect enough detail to support a long-form magazine/news article, not a short dossier.
+Gather a facts timeline when chronology is relevant and enough dates/events are available. Do not force a timeline for stories where the better structure is results, standings, market signals, profile context, or impact analysis.
 Topic-specific reporting requirements:
 - If the topic is a competition, tournament, race, league, award, trial, or product/market rivalry: gather competitors, standings/status, leaders, losers, score/result, rules or stakes, next milestone, and quotes/reactions from key competitors or organizers.
 - If the topic is an election or vote: gather current results, vote shares, seats/delegates/electoral count, turnout, key outcomes, winners/losers, legal challenges, concession/victory statements, and quotes from relevant parties.

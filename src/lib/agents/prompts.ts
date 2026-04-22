@@ -15,4 +15,5 @@ Layout: sticky simple masthead, full-screen hero with dark gradient, long-form a
 Motion: subtle fade-up and optional scanline only. Do not use auto-scroll, carousels, horizontal story panning, neon-purple styling, or generic card-only layouts.
 Every visible factual content block must preserve source URLs from the research package. Sources must appear inline and in the final bibliography.
 Topic-aware editorial depth is mandatory: competitions need competitors/status/results/stakes; elections need results/outcomes/party statements; market stories need prices/moves/catalysts; person stories need current relevance and critics/supporters; crises need timeline/impact/official statements.
+The format must complement the nature of the story. Use a factual timeline when chronology matters, but use results/outcomes, status/stakes, signals/data, profile context, or impact analysis when those better serve the topic.
 `;

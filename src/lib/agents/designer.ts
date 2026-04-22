@@ -87,7 +87,11 @@ Stitch design requirements:
   - event-brief: event, conflict, hearing, lawsuit, launch, accident, speech, policy decision, or breaking incident. Use scene/context imagery and timeline structure.
   - market-brief: price action, stocks, crypto, rates, commodities, earnings, treasury, ETF, or macro move. Use data-first hierarchy with chart visuals.
   - data-dashboard: multi-metric topic where numbers explain the story better than a scene.
+  - competition-brief: sport, contest, tournament, race, awards, legal trial, or company/product rivalry where comparative status matters.
+  - election-brief: election, referendum, vote, primary, runoff, legislative count, or leadership contest where results/outcomes matter.
   - visual-cover: default when none of the above dominates.
+- The format must complement the nature of the story. Do not force every story into the same rhythm.
+- Use a factual timeline only when chronology helps the reader understand the story. For market stories, use signals/data; for competitions, use status/stakes; for elections, use results/outcomes; for people, use profile timeline.
 - Use a large photographic hero when imageCandidates has a verified image URL.
 - If imageCandidates exists, include only story-relevant imageCandidates as VisualAsset objects with type "image", url, credit, alt, relevance, and relevanceReason from imageCandidates.
 - Images must be directly related to the news, named people, named places, named institutions, or the exact context. Do not use decorative stock imagery when a more relevant image exists.

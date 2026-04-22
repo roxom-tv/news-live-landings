@@ -6,6 +6,8 @@ The landing must feel like a premium dark magazine/news feature: full-screen ima
 
 The experience is article-first. The reader should move through a hero, a substantial story, timeline when useful, quotes, data/impact when useful, reactions, gallery, and source footer.
 
+The format must complement the nature of the story. A crisis or legal saga can use a factual timeline; an election should emphasize results and outcomes; a competition should emphasize status, stakes, and rivals; a market story should emphasize signals and data; a person story should emphasize profile context and current relevance.
+
 ## 2. Color Palette & Roles
 
 - **Base Black** `#060707` — Primary background.
@@ -66,6 +68,7 @@ Use restrained fade-up and optional scanline effect. No carousel, no auto-scroll
 - Content is king, context is queen, update is prince: article substance first, explanatory context second, live-update mechanics third.
 - Every image must directly relate to the news, named person, named institution, named location, or exact context.
 - Every graph must map to sourced story data. No decorative charts, no source-density charts, no generic visuals.
+- Use a factual timeline when possible and needed. Do not force chronology onto stories where status, results, data, or profile structure is more useful.
 
 ## 8. Anti-Patterns
 
