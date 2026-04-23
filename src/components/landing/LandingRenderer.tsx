@@ -118,66 +118,120 @@ export function LandingRenderer({ content }: { content: LandingContent }) {
   const storyMapSections = content.sections.slice(0, 5);
   const visibleUpdates = content.updateHistory.filter(update => !/fallback|repair|critic/i.test(update.summary));
   const reactionSources = content.sources.slice(0, 3);
+  const liveFeedItems = (visibleUpdates.length > 0
+    ? visibleUpdates.slice(0, 4).map(update => ({
+        label: update.materiality,
+        time: new Date(update.timestampUtc).toLocaleString(),
+        body: trimSentenceExcerpt(update.summary, 140),
+        href: update.sourceUrls[0]
+      }))
+    : content.sources.slice(0, 4).map(source => ({
+        label: source.outlet,
+        time: source.publishedAt ? new Date(source.publishedAt).toLocaleDateString() : "Current source",
+        body: trimSentenceExcerpt(source.title, 140),
+        href: source.url
+      })));
 
   return (
     <main className={styles.shell} data-layout={content.designSpec?.layout ?? "visual-cover"}>
       <nav className={styles.navbar} aria-label="Landing navigation">
         <span className={styles.brand}>Live News</span>
-      </nav>
-
-      <section className={styles.hero} aria-label="Lead story">
-        {heroImage && (
-          <img className={styles.heroImage} src={imageProxyUrl(heroImage.url)} alt={heroImage.alt} fetchPriority="high" />
-        )}
-        <div className={styles.heroGradient} aria-hidden="true" />
-        <div className={styles.heroScan} aria-hidden="true" />
-        <motion.div
-          className={styles.heroContent}
-          initial={{ opacity: 0, y: 24 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.7, ease: "easeOut" }}
-        >
-          <div className={styles.heroEyebrow}>
-            <span className={styles.breakingBadge}><span aria-hidden="true" />Live</span>
-            {heroTags.map(tag => <span className={styles.heroTag} key={tag}>{tag}</span>)}
-            <span className={styles.heroDate}>{new Date(content.lastUpdatedUtc).toLocaleString()}</span>
-          </div>
-          <h1 className={styles.heroHeadline}>{content.headline}</h1>
-          <p className={styles.heroSubheadline}>{content.subheadline}</p>
-          {heroImage && <p className={styles.heroCredit}>Image: {heroImage.credit}</p>}
-        </motion.div>
-      </section>
-
-      <section className={styles.topLineSection} aria-label="Top line">
-        <div className={styles.containerWide}>
-          <div className={styles.topLineGrid}>
-            <div className={styles.topLineLead}>
-              <span>Top Line</span>
-              <p>{content.summary}</p>
-            </div>
-            <div className={styles.topLineStats} aria-label="Landing status">
-              {highlightCards.map(point => (
-                <a key={`${point.label}-${point.value}`} href={point.sourceUrl} target="_blank" rel="noreferrer">
-                  <span>{point.label}</span>
-                  <strong>{point.value}</strong>
-                  <small>{point.context}</small>
-                </a>
-              ))}
-            </div>
-            <nav className={styles.storyMap} aria-label="Story sections">
-              {storyMapSections.map((section, index) => (
-                <a href={`#${section.id}`} key={section.id}>
-                  <span>{String(index + 1).padStart(2, "0")}</span>
-                  <strong>{section.title}</strong>
-                </a>
-              ))}
-            </nav>
-          </div>
+        <div className={styles.navLinks}>
+          {storyMapSections.map(section => (
+            <a href={`#${section.id}`} key={section.id}>{section.eyebrow}</a>
+          ))}
         </div>
-      </section>
+      </nav>
+      <div className={styles.commandDeck}>
+        <aside className={styles.commandRail} aria-label="Story command rail">
+          <div className={styles.commandRailHeader}>
+            <strong>Command Center</strong>
+            <span>Story navigation</span>
+          </div>
+          <nav className={styles.commandRailNav}>
+            {content.sections.slice(0, 8).map(section => (
+              <a href={`#${section.id}`} key={section.id}>
+                <span>{section.eyebrow}</span>
+                <strong>{section.title}</strong>
+              </a>
+            ))}
+          </nav>
+        </aside>
 
-      <section className={styles.articleSection} aria-label="Main article">
-        <div className={styles.container}>
+        <div className={styles.canvas}>
+          <section className={styles.hero} aria-label="Lead story">
+            <div className={styles.heroGrid}>
+              <div className={styles.heroMain}>
+                {heroImage && (
+                  <img className={styles.heroImage} src={imageProxyUrl(heroImage.url)} alt={heroImage.alt} fetchPriority="high" />
+                )}
+                <div className={styles.heroGradient} aria-hidden="true" />
+                <div className={styles.heroScan} aria-hidden="true" />
+                <motion.div
+                  className={styles.heroContent}
+                  initial={{ opacity: 0, y: 24 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.7, ease: "easeOut" }}
+                >
+                  <div className={styles.heroEyebrow}>
+                    <span className={styles.breakingBadge}><span aria-hidden="true" />Live</span>
+                    {heroTags.map(tag => <span className={styles.heroTag} key={tag}>{tag}</span>)}
+                    <span className={styles.heroDate}>{new Date(content.lastUpdatedUtc).toLocaleString()}</span>
+                  </div>
+                  <h1 className={styles.heroHeadline}>{content.headline}</h1>
+                  <p className={styles.heroSubheadline}>{content.subheadline}</p>
+                  {heroImage && <p className={styles.heroCredit}>Image: {heroImage.credit}</p>}
+                </motion.div>
+              </div>
+
+              <aside className={styles.liveFeed} aria-label="Live intelligence">
+                <div className={styles.liveFeedHeader}>
+                  <span>Live Intel</span>
+                  <i aria-hidden="true" />
+                </div>
+                <div className={styles.liveFeedList}>
+                  {liveFeedItems.map((item, index) => (
+                    <a href={item.href} target="_blank" rel="noreferrer" key={`${item.label}-${index}`} className={styles.liveFeedItem}>
+                      <small>{item.time}</small>
+                      <strong>{item.label}</strong>
+                      <p>{item.body}</p>
+                    </a>
+                  ))}
+                </div>
+              </aside>
+            </div>
+          </section>
+
+          <section className={styles.topLineSection} aria-label="Top line">
+            <div className={styles.containerWide}>
+              <div className={styles.topLineGrid}>
+                <div className={styles.topLineLead}>
+                  <span>Top Line</span>
+                  <p>{content.summary}</p>
+                </div>
+                <div className={styles.topLineStats} aria-label="Landing status">
+                  {highlightCards.map(point => (
+                    <a key={`${point.label}-${point.value}`} href={point.sourceUrl} target="_blank" rel="noreferrer">
+                      <span>{point.label}</span>
+                      <strong>{point.value}</strong>
+                      <small>{point.context}</small>
+                    </a>
+                  ))}
+                </div>
+                <nav className={styles.storyMap} aria-label="Story sections">
+                  {storyMapSections.map((section, index) => (
+                    <a href={`#${section.id}`} key={section.id}>
+                      <span>{String(index + 1).padStart(2, "0")}</span>
+                      <strong>{section.title}</strong>
+                    </a>
+                  ))}
+                </nav>
+              </div>
+            </div>
+          </section>
+
+          <section className={styles.articleSection} aria-label="Main article">
+            <div className={styles.container}>
           <div className={styles.sectionLabel}>
             <span>The Story</span>
             <i aria-hidden="true" />
@@ -215,11 +269,11 @@ export function LandingRenderer({ content }: { content: LandingContent }) {
               );
             })}
           </article>
-        </div>
-      </section>
+            </div>
+          </section>
 
-      <section className={styles.contextSection} aria-label="Timeline">
-        <div className={styles.container}>
+          <section className={styles.contextSection} aria-label="Timeline">
+            <div className={styles.container}>
           <div className={styles.sectionLabel}>
             <span>{contextHeading(content)}</span>
             <i aria-hidden="true" />
@@ -236,12 +290,12 @@ export function LandingRenderer({ content }: { content: LandingContent }) {
               </li>
             ))}
           </ol>
-        </div>
-      </section>
+            </div>
+          </section>
 
-      {content.quotes.length > 0 && (
-        <section className={styles.quotesSection} aria-label="Key quotes">
-          <div className={styles.containerWide}>
+          {content.quotes.length > 0 && (
+            <section className={styles.quotesSection} aria-label="Key quotes">
+              <div className={styles.containerWide}>
             <div className={styles.sectionLabel}>
               <span>Key Quotes</span>
               <i aria-hidden="true" />
@@ -258,12 +312,12 @@ export function LandingRenderer({ content }: { content: LandingContent }) {
                 </blockquote>
               ))}
             </div>
-          </div>
-        </section>
-      )}
+              </div>
+            </section>
+          )}
 
-      <section className={styles.dataSection} aria-label="Data and impact">
-        <div className={styles.containerWide}>
+          <section className={styles.dataSection} aria-label="Data and impact">
+            <div className={styles.containerWide}>
           <div className={styles.sectionLabel}>
             <span>Data & Impact</span>
             <i aria-hidden="true" />
@@ -292,12 +346,12 @@ export function LandingRenderer({ content }: { content: LandingContent }) {
                 ))}
               </div>
             </div>
-          )}
-        </div>
-      </section>
+            )}
+            </div>
+          </section>
 
-      <section className={styles.reactionsSection} aria-label="Reactions and perspectives">
-        <div className={styles.containerWide}>
+          <section className={styles.reactionsSection} aria-label="Reactions and perspectives">
+            <div className={styles.containerWide}>
             <div className={styles.sectionLabel}>
               <span>Reporting Threads</span>
               <i aria-hidden="true" />
@@ -313,13 +367,13 @@ export function LandingRenderer({ content }: { content: LandingContent }) {
                 <p>{source.title}</p>
               </a>
             ))}
-          </div>
-        </div>
-      </section>
+            </div>
+            </div>
+          </section>
 
-      {imageVisuals.length > 1 && (
-        <section className={styles.gallerySection} aria-label="Image gallery">
-          <div className={styles.containerWide}>
+          {imageVisuals.length > 1 && (
+            <section className={styles.gallerySection} aria-label="Image gallery">
+              <div className={styles.containerWide}>
             <div className={styles.sectionLabel}>
               <span>Images</span>
               <i aria-hidden="true" />
@@ -332,13 +386,13 @@ export function LandingRenderer({ content }: { content: LandingContent }) {
                 </figure>
               ))}
             </div>
-          </div>
-        </section>
-      )}
+              </div>
+            </section>
+          )}
 
-      {visibleUpdates.length > 0 && (
-        <section className={styles.updates}>
-          <div className={styles.container}>
+          {visibleUpdates.length > 0 && (
+            <section className={styles.updates}>
+              <div className={styles.container}>
             <div className={styles.sectionLabel}>
               <span>Live Update History</span>
               <i aria-hidden="true" />
@@ -350,12 +404,12 @@ export function LandingRenderer({ content }: { content: LandingContent }) {
                 <span>{new Date(update.timestampUtc).toLocaleString()}</span>
               </div>
             ))}
-          </div>
-        </section>
-      )}
+              </div>
+            </section>
+          )}
 
-      <section className={styles.sourcesSection} aria-label="Sources">
-        <div className={styles.containerWide}>
+          <section className={styles.sourcesSection} aria-label="Sources">
+            <div className={styles.containerWide}>
           <div className={styles.sectionLabel}>
             <span>Sources</span>
             <i aria-hidden="true" />
@@ -381,8 +435,10 @@ export function LandingRenderer({ content }: { content: LandingContent }) {
               </li>
             ))}
           </ol>
+            </div>
+          </section>
         </div>
-      </section>
+      </div>
 
       <footer className={styles.footer}>
         <p>
