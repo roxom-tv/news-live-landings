@@ -18,11 +18,17 @@ import type { LandingContent, LandingRecord } from "./types";
 import { enforceTopLineLanding } from "./landing-quality";
 
 const retryableStatuses = new Set(["drafting", "critic_review", "blocked", "cancelled", "failed"]);
-const maxCriticRepairAttempts = 3;
+const defaultCriticRepairAttempts = 8;
 type PipelineStageReporter = (stage: string, detail?: string) => Promise<void> | void;
 
 const reportStage = async (reporter: PipelineStageReporter | undefined, stage: string, detail?: string) => {
   if (reporter) await reporter(stage, detail);
+};
+
+const maxCriticRepairAttempts = () => {
+  const configured = Number(process.env.CRITIC_REPAIR_ATTEMPTS);
+  if (Number.isFinite(configured) && configured > 0) return Math.floor(configured);
+  return defaultCriticRepairAttempts;
 };
 
 const createOrRestartDraft = (input: { existing: LandingRecord | null; content: LandingContent; slug: string; topic: string }) => {
@@ -110,7 +116,7 @@ const safeBriefContent = (input: {
       {
         timestampUtc: timestamp,
         materiality: "MINOR",
-        summary: `Published as conservative safe brief after autonomous repair feedback: ${input.reason}`,
+        summary: `Prepared conservative fallback content after autonomous repair feedback: ${input.reason}`,
         sourceUrls: input.base.sources.map(source => source.url)
       },
       ...input.base.updateHistory
@@ -144,15 +150,16 @@ export const startLiveLanding = async (topic: string, onStage?: PipelineStageRep
   await reportStage(onStage, "critic_review", "Checking sourcing, wording, visuals, and publication readiness.");
   let critic = await runCritic(content, draft.id);
   let repairFailureReason: string | null = null;
+  const repairLimit = maxCriticRepairAttempts();
 
-  for (let attempt = 0; !critic.approved && critic.severity === "changes_requested" && attempt < maxCriticRepairAttempts; attempt += 1) {
-    await reportStage(onStage, "repairing", `Critic requested changes. Autonomous repair attempt ${attempt + 1}/${maxCriticRepairAttempts}.`);
+  for (let attempt = 0; !critic.approved && critic.severity === "changes_requested" && attempt < repairLimit; attempt += 1) {
+    await reportStage(onStage, "repairing", `Critic requested changes. Autonomous quality repair ${attempt + 1}/${repairLimit}.`);
     try {
       content = await runDesignerRevision(content, critic, research);
       critic = await runCritic(content, draft.id);
     } catch (error) {
       repairFailureReason = error instanceof Error ? error.message : String(error);
-      await reportStage(onStage, "repair_recovered", `Repair hit a transient error and will publish a conservative sourced brief: ${repairFailureReason}`);
+      await reportStage(onStage, "repair_failed", `Repair hit a transient error: ${repairFailureReason}`);
       break;
     }
   }
@@ -179,9 +186,25 @@ export const startLiveLanding = async (topic: string, onStage?: PipelineStageRep
   }
 
   if (!critic.approved) {
-    await reportStage(onStage, "publishing_safe_brief", "Publishing conservative sourced version after repair attempts.");
-    const safeContent = safeBriefContent({ base: content, writing, slug, topic, reason: repairFailureReason ?? critic.summary });
-    return updateLandingContent(draft.id, safeContent, "live");
+    await reportStage(onStage, "blocked", `Critic did not approve after ${repairLimit} repair attempts. Keeping the landing unpublished for quality control.`);
+    const fallbackContent = safeBriefContent({ base: content, writing, slug, topic, reason: repairFailureReason ?? critic.summary });
+    return updateLandingContent(
+      draft.id,
+      {
+        ...fallbackContent,
+        status: "blocked",
+        updateHistory: [
+          {
+            timestampUtc: new Date().toISOString(),
+            materiality: "BLOCKER",
+            summary: `Not published: Critic did not approve after ${repairLimit} repair attempts. ${repairFailureReason ?? critic.summary}`,
+            sourceUrls: fallbackContent.sources.map(source => source.url)
+          },
+          ...fallbackContent.updateHistory
+        ]
+      },
+      "blocked"
+    );
   }
 
   await reportStage(onStage, "publishing", "Critic approved. Publishing final URL.");

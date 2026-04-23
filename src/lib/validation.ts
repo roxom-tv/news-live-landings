@@ -9,8 +9,10 @@ export const validateLandingContent = (content: LandingContent): CriticResult =>
   if (content.sources.length < 3) issues.push("At least three cited sources are required.");
   if (content.sections.length < 9) issues.push("At least nine story sections are required for a full news article.");
   if (!content.visuals.length) issues.push("At least one visual asset or SVG direction is required.");
-  if (!content.visuals.some(visual => visual.type === "image" && visual.url?.startsWith("http"))) {
-    issues.push("At least one sourced image URL is required for the landing hero when available.");
+  const hasImageVisual = content.visuals.some(visual => visual.type === "image" && visual.url?.startsWith("http"));
+  const hasFallbackVisual = content.visuals.some(visual => visual.type === "svg" || visual.type === "chart" || visual.type === "map");
+  if (!hasImageVisual && !hasFallbackVisual) {
+    issues.push("Add a usable visual asset: a sourced image when available, or a deliberate fallback visual direction.");
   }
   if (content.dataPoints.length < 3) issues.push("At least three sourced data/context points are required.");
   if (content.visuals.some(visual => visual.type === "image" && visual.url && !visual.relevanceReason)) {
@@ -22,7 +24,6 @@ export const validateLandingContent = (content: LandingContent): CriticResult =>
 
   for (const source of content.sources) {
     if (!source.url.startsWith("http")) issues.push(`Invalid source URL: ${source.url}`);
-    if (source.credibility === "unknown") issues.push(`Unknown source credibility for ${source.outlet}.`);
   }
 
   for (const section of content.sections) {

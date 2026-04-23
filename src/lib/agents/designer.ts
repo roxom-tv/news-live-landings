@@ -153,7 +153,7 @@ export const runDesignerRevision = async (content: LandingContent, critic: Criti
     agent: "designer",
     system: stitchDesignSystem,
     prompt: `
-Revise this live news landing JSON so it can pass Critic without human intervention.
+Revise this live news landing JSON so it can pass Critic and still feel like a polished top-line news landing.
 Keep the same JSON shape and slug. Return only the complete revised JSON.
 
 Rules:
@@ -162,9 +162,10 @@ Rules:
 - Every quote and data point must include a real sourceUrl from the source list.
 - Every section must include sourceUrls from the source list.
 - If dates differ, distinguish event date from report date.
-- Keep at least 5 sections when the source material supports it.
+- Keep at least 9 substantial sections. If a section is thin, expand it only with already sourced facts, source-context framing, or clearly marked uncertainty.
 - Preserve source-associated image visuals from Research whenever imageCandidates are available.
-- Use a premium editorial one-page layout. Do not use auto-scroll, carousels, ticker motion, or TV-slide language.
+- Use the retro-futurist broadcast look with restraint: strong hero, top-line story map, neon glass accents, clear section hierarchy, and source clarity.
+- Improve beauty and readability while fixing Critic issues. Better section titles, sharper summaries, stronger visual hints, and tighter data cards are valid repair work.
 - Keep or add topic-specific reporting depth: competitors/status/results for competitions, results/outcomes for elections, quotes from relevant parties when exact source text exists, and full source bibliography at the end.
 - Use safe, neutral wording. Do not overstate legal claims as fact.
 - Preserve or improve designSpec using the Stitch design system.
