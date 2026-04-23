@@ -1,51 +1,66 @@
 import type { CriticResult, LandingContent } from "./types";
 
+const sectionWordCount = (body: string) => body.split(/\s+/).filter(Boolean).length;
+
 export const validateLandingContent = (content: LandingContent): CriticResult => {
   const issues: string[] = [];
   const sourceUrls = new Set(content.sources.map(source => source.url));
 
-  if (!content.headline || content.headline.length < 12) issues.push("Headline is missing or too weak.");
-  if (!content.subheadline) issues.push("Subheadline is missing.");
-  if (content.sources.length < 3) issues.push("At least three cited sources are required.");
-  if (content.sections.length < 9) issues.push("At least nine story sections are required for a full news article.");
-  if (!content.visuals.length) issues.push("At least one visual asset or SVG direction is required.");
+  if (!content.headline || content.headline.length < 12) {
+    issues.push("headline: Add a specific, publish-ready headline of at least 12 characters that names the story and the main action.");
+  }
+  if (!content.subheadline) {
+    issues.push("subheadline: Add a one- or two-sentence subheadline that explains why the story matters now.");
+  }
+  if (content.sources.length < 3) {
+    issues.push(`sources: Attach at least 3 cited sources; current count is ${content.sources.length}.`);
+  }
+  if (content.sections.length < 9) {
+    issues.push(`sections: Build at least 9 clear story sections; current count is ${content.sections.length}. Required coverage: lead, stakes, actors, status/result, timeline/comparison, impact/data, reactions, uncertainty, next watch.`);
+  }
+  if (!content.visuals.length) {
+    issues.push("visuals: Add at least one visual asset: a sourced image when available, or a deliberate fallback visual direction.");
+  }
   const hasImageVisual = content.visuals.some(visual => visual.type === "image" && visual.url?.startsWith("http"));
   const hasFallbackVisual = content.visuals.some(visual => visual.type === "svg" || visual.type === "chart" || visual.type === "map");
   if (!hasImageVisual && !hasFallbackVisual) {
-    issues.push("Add a usable visual asset: a sourced image when available, or a deliberate fallback visual direction.");
+    issues.push("visuals: Add a usable hero visual. Use a sourced image when available; otherwise add a clear SVG/chart/map fallback direction tied to the story.");
   }
-  if (content.dataPoints.length < 3) issues.push("At least three sourced data/context points are required.");
+  if (content.dataPoints.length < 3) {
+    issues.push(`dataPoints: Add at least 3 sourced data/context cards; current count is ${content.dataPoints.length}. Use numbers, dates, actor counts, status markers, or source-count context.`);
+  }
   if (content.visuals.some(visual => visual.type === "image" && visual.url && !visual.relevanceReason)) {
-    issues.push("Every image visual must include a relevanceReason explaining why it belongs to this story.");
+    issues.push("visuals: Every image visual needs relevanceReason explaining why that image belongs to this exact story.");
   }
   if (content.visuals.some(visual => visual.type === "chart" && !visual.relevanceReason)) {
-    issues.push("Every chart visual must include a relevanceReason tied to sourced data.");
+    issues.push("visuals: Every chart visual needs relevanceReason tied to specific sourced data.");
   }
 
   for (const source of content.sources) {
-    if (!source.url.startsWith("http")) issues.push(`Invalid source URL: ${source.url}`);
+    if (!source.url.startsWith("http")) issues.push(`sources: Invalid source URL "${source.url}". Replace it with an absolute http(s) URL.`);
   }
 
   for (const section of content.sections) {
     if (!section.sourceUrls?.length) {
-      issues.push(`Missing source URLs for section ${section.id}.`);
+      issues.push(`section:${section.id}: Add sourceUrls from the attached source list.`);
       continue;
     }
-    if (section.body.split(/\s+/).filter(Boolean).length < 120) {
-      issues.push(`Section ${section.id} is too thin; expand it into real article prose with sourced context.`);
+    const words = sectionWordCount(section.body);
+    if (words < 120) {
+      issues.push(`section:${section.id}: Body has ${words} words; expand to at least 120 words with sourced article prose, source-context framing, or clearly marked uncertainty.`);
     }
 
     for (const sourceUrl of section.sourceUrls) {
-      if (!sourceUrls.has(sourceUrl)) issues.push(`Section ${section.id} cites a source URL that is not attached to the landing.`);
+      if (!sourceUrls.has(sourceUrl)) issues.push(`section:${section.id}: Cites sourceUrl "${sourceUrl}" but that URL is not in content.sources. Use only attached source URLs.`);
     }
   }
 
   for (const quote of content.quotes) {
-    if (!sourceUrls.has(quote.sourceUrl)) issues.push(`Quote cites a source URL that is not attached to the landing: ${quote.sourceUrl}`);
+    if (!sourceUrls.has(quote.sourceUrl)) issues.push(`quotes: Quote from "${quote.attribution}" cites unattached sourceUrl "${quote.sourceUrl}". Use an attached source URL or remove the quote.`);
   }
 
   for (const point of content.dataPoints) {
-    if (!sourceUrls.has(point.sourceUrl)) issues.push(`Data point cites a source URL that is not attached to the landing: ${point.sourceUrl}`);
+    if (!sourceUrls.has(point.sourceUrl)) issues.push(`dataPoints:${point.label}: Cites unattached sourceUrl "${point.sourceUrl}". Use an attached source URL.`);
   }
 
   for (const visual of content.visuals) {
@@ -56,11 +71,13 @@ export const validateLandingContent = (content: LandingContent): CriticResult =>
     const allowedTerms = new Set([...topicTerms, ...sourceTerms]);
     const hasTopicalOverlap = [...allowedTerms].some(term => relevanceText.includes(term));
     if (!hasTopicalOverlap && visual.relevance !== "direct") {
-      issues.push(`Image visual appears weakly related to the story: ${visual.title}`);
+      issues.push(`visuals:${visual.title}: Relevance looks weak. Rewrite relevanceReason with explicit overlap to the topic, source title, named person, institution, or place; otherwise remove the image.`);
     }
   }
 
-  if (content.designSpec?.source !== "stitch") issues.push("Landing is missing a Stitch design specification.");
+  if (content.designSpec?.source !== "stitch") {
+    issues.push("designSpec: Add a Stitch design specification with layout, palette, hero treatment, motion, and notes.");
+  }
 
   const approved = issues.length === 0;
   return {

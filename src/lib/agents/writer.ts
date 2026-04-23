@@ -39,6 +39,13 @@ Use section titles that feel like magazine subheads, not generic labels such as 
 Avoid dry transitions. Each section should move the story forward and connect to the next one.
 Include at least 3 dataPoints when the research contains numbers, dates, counts, prices, named actors, or status markers.
 Use visualHint "chart" for sections with time, price, count, volume, comparison, route, or risk data. Use "map" for geography. Use "image" for actor/place/object sections.
+Before returning JSON, run this private preflight and fix failures yourself:
+- 9-14 sections are present and each body is 150-260 words when research supports it.
+- The first three sections make the landing immediately understandable: what happened, why it matters, who/what is involved.
+- Every section has at least one sourceUrl from Research.sources and no sourceUrl outside that list.
+- No generic section titles remain unless the topic truly demands them.
+- Summary and subheadline are specific enough that a reader can understand the story without scrolling.
+- Data points are concrete, source-linked, and useful as top-line cards.
 Return JSON:
 {
   "headline": string,

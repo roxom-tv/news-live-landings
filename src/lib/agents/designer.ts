@@ -106,6 +106,14 @@ Stitch design requirements:
 - The landing must end with a complete source bibliography. Inline source tags are required, but the full source list belongs at the bottom.
 - Do not add any factual claim not present in Writing or Research.
 - Preserve sourceUrls on every section.
+First-pass quality gate before returning:
+- Pretend Critic will review the JSON next. Fix obvious failures before output.
+- Headline, subheadline, and summary must make the story understandable without scrolling.
+- At least 9 sections must be present, each with real article prose and sourceUrls from the source list.
+- The top-line section map must have meaningful eyebrows, not repeated generic labels.
+- Visuals must be story-relevant. If no real image is available, include a deliberate SVG/chart/map fallback visual direction instead of pretending a decorative image exists.
+- DesignSpec must match the retro-futurist broadcast system: hot pink, neon purple, bright cyan, glass restraint, strong source clarity.
+- Data points must be useful as top-line cards and must cite attached sources.
 Images: ${JSON.stringify(research.imageCandidates)}
 Topic: ${topic}
 Research: ${JSON.stringify(research)}
@@ -169,6 +177,7 @@ Rules:
 - Keep or add topic-specific reporting depth: competitors/status/results for competitions, results/outcomes for elections, quotes from relevant parties when exact source text exists, and full source bibliography at the end.
 - Use safe, neutral wording. Do not overstate legal claims as fact.
 - Preserve or improve designSpec using the Stitch design system.
+- Every Critic issue must be addressed directly. If a section id is named in feedback, fix that exact section. If a count is named, meet or exceed the count.
 - Set "status" to "critic_review".
 
 Critic feedback:
