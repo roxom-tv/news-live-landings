@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import { LandingRenderer } from "@/components/landing/LandingRenderer";
 import { getLandingBySlug } from "@/lib/db";
 import { withDiscoveredSourceImages } from "@/lib/source-images";
+import AdminPage from "@/app/admin/page";
 
 type Props = {
   params: Promise<{ slug: string }>;
@@ -26,6 +27,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default async function LandingPage({ params }: Props) {
   const { slug } = await params;
+  if (slug === "admin") return <AdminPage />;
   const landing = getLandingBySlug(slug);
   if (!landing || landing.status !== "live") notFound();
   const content = await withDiscoveredSourceImages(landing.content);
