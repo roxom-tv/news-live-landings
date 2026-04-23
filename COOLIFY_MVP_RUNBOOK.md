@@ -90,10 +90,11 @@ Use `/landings/api/internal/live-cycle` if the app is path-mounted under `/landi
 Set `ADMIN_TOKEN` in production, then open:
 
 ```text
-https://diegodella.ar/admin?token=YOUR_ADMIN_TOKEN
+https://diegodella.ar/landings/admin?token=YOUR_ADMIN_TOKEN
 ```
 
 The editor saves runtime overrides for Research, Writer, Designer, and Critic in `/data/admin-agent-overrides.json` by default. Set `AGENT_OVERRIDES_DIR` to use a different persistent directory. Overrides apply to new agent runs without a rebuild. They do not rewrite the source files in Git.
+If the full root app is routed to this service, `/admin` also works. With the current `/landings` path mount, use `/landings/admin`.
 
 ## Acceptance Smoke Test
 
