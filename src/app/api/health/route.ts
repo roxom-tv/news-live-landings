@@ -8,8 +8,14 @@ export async function GET() {
   return NextResponse.json({
     ok: true,
     service: "news-live-landings",
+    pipelineEnv: env.pipelineEnv,
     landings: listLandings(100).length,
     liveLandings: listActiveLandings().length,
+    features: {
+      designSpecFallbackNormalization: true,
+      criticGuidanceMode: true,
+      publishConservativeFallbackOnRepairStop: true
+    },
     configured: {
       openai: Boolean(env.openaiApiKey),
       telegramBot: Boolean(env.telegramBotToken),
