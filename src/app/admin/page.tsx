@@ -21,7 +21,7 @@ export default async function AdminPage({ searchParams }: AdminPageProps) {
         <p>Agent Control</p>
         <h1>Edit landing agents from the web.</h1>
         <span>
-          Runtime overrides are saved outside the compiled app and are applied to new agent runs immediately.
+          Agent Markdown files are saved outside the compiled app and are applied to new agent runs immediately.
         </span>
       </header>
       <AdminAgentEditor initialToken={token} initialAgents={initialAgents} />

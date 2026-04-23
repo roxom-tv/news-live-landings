@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { isEditableAgentId, listEditableAgents, saveAgentOverride } from "@/lib/admin-agents";
+import { isEditableAgentId, listEditableAgents, saveAgentMarkdown } from "@/lib/admin-agents";
 import { requestHasAdminAccess, unauthorizedAdminResponse } from "@/lib/admin-auth";
 
 export const dynamic = "force-dynamic";
@@ -12,14 +12,14 @@ export async function GET(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
   if (!requestHasAdminAccess(request)) return unauthorizedAdminResponse();
-  const body = await request.json().catch(() => ({})) as { agentId?: unknown; override?: unknown };
+  const body = await request.json().catch(() => ({})) as { agentId?: unknown; markdown?: unknown; override?: unknown };
   if (!isEditableAgentId(body.agentId)) {
-    return NextResponse.json({ ok: false, error: "agentId must be one of: research, writer, designer, critic" }, { status: 400 });
+    return NextResponse.json({ ok: false, error: "agentId must be a known pipeline agent" }, { status: 400 });
   }
-  if (typeof body.override !== "string") {
-    return NextResponse.json({ ok: false, error: "override must be a string" }, { status: 400 });
+  const markdown = typeof body.markdown === "string" ? body.markdown : body.override;
+  if (typeof markdown !== "string") {
+    return NextResponse.json({ ok: false, error: "markdown must be a string" }, { status: 400 });
   }
-  const override = await saveAgentOverride(body.agentId, body.override);
-  return NextResponse.json({ ok: true, agentId: body.agentId, override });
+  const savedMarkdown = await saveAgentMarkdown(body.agentId, markdown);
+  return NextResponse.json({ ok: true, agentId: body.agentId, markdown: savedMarkdown, override: savedMarkdown });
 }
-

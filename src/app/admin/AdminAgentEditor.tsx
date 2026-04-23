@@ -19,7 +19,8 @@ type EditableAgent = {
   filePath: string;
   status: "active" | "role-only";
   currentDescription: string;
-  override: string;
+  mdPath: string;
+  markdown: string;
 };
 
 type ApiState = "idle" | "loading" | "saving" | "error" | "saved";
@@ -39,7 +40,7 @@ export function AdminAgentEditor({ initialToken, initialAgents }: { initialToken
   ));
   const [agents, setAgents] = useState<EditableAgent[]>(initialAgents);
   const [selectedId, setSelectedId] = useState<EditableAgent["id"]>(initialAgents[0]?.id ?? "writer");
-  const [draft, setDraft] = useState(initialAgents[0]?.override ?? "");
+  const [draft, setDraft] = useState(initialAgents[0]?.markdown ?? "");
   const [state, setState] = useState<ApiState>("idle");
   const [message, setMessage] = useState("");
 
@@ -65,7 +66,7 @@ export function AdminAgentEditor({ initialToken, initialAgents }: { initialToken
     }
     setAgents(payload.agents);
     setSelectedId(payload.agents[0]?.id ?? "writer");
-    setDraft(payload.agents[0]?.override ?? "");
+    setDraft(payload.agents[0]?.markdown ?? "");
     setState("idle");
   };
 
@@ -77,7 +78,7 @@ export function AdminAgentEditor({ initialToken, initialAgents }: { initialToken
 
   const selectAgent = (agent: EditableAgent) => {
     setSelectedId(agent.id);
-    setDraft(agent.override);
+    setDraft(agent.markdown);
   };
 
   const save = async () => {
@@ -87,19 +88,19 @@ export function AdminAgentEditor({ initialToken, initialAgents }: { initialToken
     const response = await fetch(adminApiPath(), {
       method: "POST",
       headers: authHeaders,
-      body: JSON.stringify({ agentId: selectedAgent.id, override: draft })
+      body: JSON.stringify({ agentId: selectedAgent.id, markdown: draft })
     });
     const payload = await response.json();
     if (!response.ok) {
       setState("error");
-      setMessage(payload.error ?? "Could not save agent override.");
+      setMessage(payload.error ?? "Could not save agent Markdown.");
       return;
     }
     setAgents(current => current.map(agent => (
-      agent.id === selectedAgent.id ? { ...agent, override: payload.override } : agent
+      agent.id === selectedAgent.id ? { ...agent, markdown: payload.markdown } : agent
     )));
     setState("saved");
-    setMessage(`${selectedAgent.label} saved. New runs will use this override.`);
+    setMessage(`${selectedAgent.label} Markdown saved. New runs will use this file.`);
   };
 
   const clear = async () => {
@@ -109,19 +110,20 @@ export function AdminAgentEditor({ initialToken, initialAgents }: { initialToken
     const response = await fetch(adminApiPath(), {
       method: "POST",
       headers: authHeaders,
-      body: JSON.stringify({ agentId: selectedAgent.id, override: "" })
+      body: JSON.stringify({ agentId: selectedAgent.id, markdown: "" })
     });
     const payload = await response.json();
     if (!response.ok) {
       setState("error");
-      setMessage(payload.error ?? "Could not clear agent override.");
+      setMessage(payload.error ?? "Could not reset agent Markdown.");
       return;
     }
     setAgents(current => current.map(agent => (
-      agent.id === selectedAgent.id ? { ...agent, override: "" } : agent
+      agent.id === selectedAgent.id ? { ...agent, markdown: payload.markdown } : agent
     )));
+    setDraft(payload.markdown);
     setState("saved");
-    setMessage(`${selectedAgent.label} override cleared.`);
+    setMessage(`${selectedAgent.label} Markdown reset to default.`);
   };
 
   return (
@@ -149,7 +151,7 @@ export function AdminAgentEditor({ initialToken, initialAgents }: { initialToken
             >
               <span>{agent.label}</span>
               <em>{agent.status === "active" ? "Active prompt" : "Role only"}</em>
-              <small>{agent.filePath}</small>
+              <small>{agent.mdPath}</small>
             </button>
           ))}
         </div>
@@ -163,13 +165,14 @@ export function AdminAgentEditor({ initialToken, initialAgents }: { initialToken
                 <p>{selectedAgent.id}</p>
                 <h2>{selectedAgent.label}</h2>
                 <span>{selectedAgent.role}</span>
+                <small className={styles.pathText}>{selectedAgent.mdPath}</small>
               </div>
               <strong className={selectedAgent.status === "active" ? styles.activeBadge : styles.roleBadge}>
                 {selectedAgent.status === "active" ? "Runtime prompt" : "Pipeline role"}
               </strong>
               <div className={styles.actions}>
                 <button className={styles.secondaryButton} onClick={clear} type="button" disabled={state === "saving"}>
-                  Clear
+                  Reset
                 </button>
                 <button className={styles.primaryButton} onClick={save} type="button" disabled={state === "saving"}>
                   {state === "saving" ? "Saving" : "Save"}
@@ -178,12 +181,9 @@ export function AdminAgentEditor({ initialToken, initialAgents }: { initialToken
             </div>
             <div className={styles.descriptionBlock}>
               <div>
-                <span>Current Description</span>
+                <span>Agent Summary</span>
                 <p>{selectedAgent.currentDescription}</p>
               </div>
-              <button className={styles.secondaryButton} onClick={() => setDraft(selectedAgent.currentDescription)} type="button">
-                Edit From Current
-              </button>
             </div>
             <textarea
               className={styles.textarea}
@@ -191,15 +191,15 @@ export function AdminAgentEditor({ initialToken, initialAgents }: { initialToken
               onChange={event => setDraft(event.target.value)}
               placeholder={
                 selectedAgent.status === "active"
-                  ? `Add runtime instructions for ${selectedAgent.label}. Example: Require the first three sections to be Lead, Why It Matters, and Who Is Involved.`
-                  : `Save operator notes or desired behavior for ${selectedAgent.label}. This role is not injected into an LLM prompt yet.`
+                  ? `Edit the Markdown instructions for ${selectedAgent.label}. These are injected into new LLM runs.`
+                  : `Edit the Markdown instructions for ${selectedAgent.label}. This role is visible here, but current execution is deterministic code rather than an LLM prompt.`
               }
               spellCheck={false}
             />
             <div className={styles.status} data-state={state}>
               {message || (selectedAgent.status === "active"
-                ? "Overrides are appended to the selected agent at runtime. Empty text means the code default is used."
-                : "This role is loaded for visibility and editing, but current execution is deterministic code rather than an LLM prompt.")}
+                ? "This Markdown is loaded from disk and appended to the selected active agent at runtime."
+                : "This Markdown is loaded from disk for visibility and editing. The role currently runs as deterministic code.")}
             </div>
           </>
         ) : (

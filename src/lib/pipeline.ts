@@ -8,6 +8,7 @@ import {
   updateLandingStatus
 } from "./db";
 import { finalUrlForSlug } from "./config";
+import { hashValue } from "./hash";
 import { slugify } from "./slug";
 import { runCritic } from "./agents/critic";
 import { defaultStitchDesignSpec, runDesigner, runDesignerRevision } from "./agents/designer";
@@ -151,12 +152,38 @@ export const startLiveLanding = async (topic: string, onStage?: PipelineStageRep
   let critic = await runCritic(content, draft.id);
   let repairFailureReason: string | null = null;
   const repairLimit = maxCriticRepairAttempts();
+  let repairAttemptsUsed = 0;
+  let lastContentHash = hashValue(content);
+  let lastCriticFingerprint = hashValue({
+    severity: critic.severity,
+    issues: critic.issues,
+    summary: critic.summary
+  });
 
   for (let attempt = 0; !critic.approved && critic.severity === "changes_requested" && attempt < repairLimit; attempt += 1) {
+    repairAttemptsUsed = attempt + 1;
     await reportStage(onStage, "repairing", `Critic requested changes. Autonomous quality repair ${attempt + 1}/${repairLimit}.`);
     try {
       content = await runDesignerRevision(content, critic, research);
+      const contentHash = hashValue(content);
+      if (contentHash === lastContentHash) {
+        repairFailureReason = "Designer repair produced no material content change, so the pipeline stopped before using more attempts.";
+        await reportStage(onStage, "repair_stopped", repairFailureReason);
+        break;
+      }
+      lastContentHash = contentHash;
       critic = await runCritic(content, draft.id);
+      const criticFingerprint = hashValue({
+        severity: critic.severity,
+        issues: critic.issues,
+        summary: critic.summary
+      });
+      if (!critic.approved && critic.severity === "changes_requested" && criticFingerprint === lastCriticFingerprint) {
+        repairFailureReason = "Critic repeated the same repair feedback after a revision, so the pipeline stopped early instead of spending all attempts.";
+        await reportStage(onStage, "repair_stopped", repairFailureReason);
+        break;
+      }
+      lastCriticFingerprint = criticFingerprint;
     } catch (error) {
       repairFailureReason = error instanceof Error ? error.message : String(error);
       await reportStage(onStage, "repair_failed", `Repair hit a transient error: ${repairFailureReason}`);
@@ -186,7 +213,10 @@ export const startLiveLanding = async (topic: string, onStage?: PipelineStageRep
   }
 
   if (!critic.approved) {
-    await reportStage(onStage, "blocked", `Critic did not approve after ${repairLimit} repair attempts. Keeping the landing unpublished for quality control.`);
+    const repairSummary = repairFailureReason
+      ? `Critic did not approve after ${repairAttemptsUsed} repair attempt${repairAttemptsUsed === 1 ? "" : "s"}: ${repairFailureReason}`
+      : `Critic did not approve after ${repairLimit} repair attempts.`;
+    await reportStage(onStage, "blocked", `${repairSummary} Keeping the landing unpublished for quality control.`);
     const fallbackContent = safeBriefContent({ base: content, writing, slug, topic, reason: repairFailureReason ?? critic.summary });
     return updateLandingContent(
       draft.id,
@@ -197,7 +227,7 @@ export const startLiveLanding = async (topic: string, onStage?: PipelineStageRep
           {
             timestampUtc: new Date().toISOString(),
             materiality: "BLOCKER",
-            summary: `Not published: Critic did not approve after ${repairLimit} repair attempts. ${repairFailureReason ?? critic.summary}`,
+            summary: `Not published: ${repairSummary} ${critic.summary}`,
             sourceUrls: fallbackContent.sources.map(source => source.url)
           },
           ...fallbackContent.updateHistory

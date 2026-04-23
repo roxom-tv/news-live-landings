@@ -11,10 +11,13 @@ export type EditableAgent = {
   filePath: string;
   status: "active" | "role-only";
   currentDescription: string;
-  override: string;
+  mdPath: string;
+  markdown: string;
 };
 
-const agentDefinitions: Array<Omit<EditableAgent, "override">> = [
+type AgentDefinition = Omit<EditableAgent, "mdPath" | "markdown">;
+
+const agentDefinitions: AgentDefinition[] = [
   {
     id: "telegramGateway",
     label: "Telegram Gateway",
@@ -31,7 +34,7 @@ const agentDefinitions: Array<Omit<EditableAgent, "override">> = [
     filePath: "src/lib/agents/discover.ts",
     status: "active",
     currentDescription:
-      "Uses current web search to select one timely landing topic with a meaningful new development from the last 8 hours. It prefers credible source coverage, urgency, strong visual potential, named actors, measurable deltas, and landing suitability. Returns 3-5 scored candidates with freshness evidence plus the selected topic and rationale."
+      "Uses current web search to select one timely landing topic with a meaningful new development from the last 8 hours. It searches broad news beats and outlets when the hint is generic, returns only a real news topic, and stops the process if no valid source-rich topic can be verified."
   },
   {
     id: "research",
@@ -67,7 +70,7 @@ const agentDefinitions: Array<Omit<EditableAgent, "override">> = [
     filePath: "src/lib/agents/critic.ts",
     status: "active",
     currentDescription:
-      "Reviews the generated landing before publication as a red team. It checks source support, factual caution, unsafe claims, freshness, first-viewport clarity, section quality, visual relevance, and publication readiness. Its issues must be understandable and directly repairable."
+      "Reviews the generated landing before publication as a red team. It checks source support, factual caution, unsafe claims, freshness, first-viewport clarity, section quality, visual relevance, and publication readiness. Its issues must be understandable and directly repairable; repeated identical feedback stops repair early instead of spending all attempts."
   },
   {
     id: "publisher",
@@ -100,6 +103,22 @@ const agentDefinitions: Array<Omit<EditableAgent, "override">> = [
 
 const storeDirectory = () => process.env.AGENT_OVERRIDES_DIR ?? (env.pipelineEnv === "prod" ? "/data" : "/tmp");
 const storePath = () => `${storeDirectory().replace(/\/$/, "")}/admin-agent-overrides.json`;
+const markdownDirectory = () => process.env.AGENT_MD_DIR ?? `${storeDirectory().replace(/\/$/, "")}/agents`;
+const markdownPath = (agentId: EditableAgentId) => `${markdownDirectory().replace(/\/$/, "")}/${agentId}.md`;
+
+const defaultAgentMarkdown = (agent: AgentDefinition) => `# ${agent.label}
+
+## Role
+${agent.role}
+
+## Current Description
+${agent.currentDescription}
+
+## Operating Instructions
+- Follow the project editorial system and source requirements.
+- Produce first-pass publishable quality whenever this role calls an LLM.
+- Keep outputs specific, source-backed, understandable, and directly repairable.
+`;
 
 const readOverrides = async (): Promise<Partial<Record<EditableAgentId, string>>> => {
   try {
@@ -112,33 +131,59 @@ const readOverrides = async (): Promise<Partial<Record<EditableAgentId, string>>
 
 export const listEditableAgents = async (): Promise<EditableAgent[]> => {
   const overrides = await readOverrides();
-  return agentDefinitions.map(agent => ({
-    ...agent,
-    override: overrides[agent.id] ?? ""
+  return Promise.all(agentDefinitions.map(async agent => {
+    const mdPath = markdownPath(agent.id);
+    const markdown = await readAgentMarkdown(agent, overrides[agent.id]);
+    return {
+      ...agent,
+      mdPath,
+      markdown
+    };
   }));
 };
 
 export const getAgentOverride = async (agentId: EditableAgentId) => {
+  const agent = agentDefinitions.find(definition => definition.id === agentId);
+  if (!agent) return "";
   const overrides = await readOverrides();
-  const override = overrides[agentId]?.trim();
-  if (!override) return "";
-  return `\n\nAdmin override for ${agentId} agent:\n${override}\n`;
+  const markdown = (await readAgentMarkdown(agent, overrides[agent.id])).trim();
+  if (!markdown) return "";
+  return `\n\nAdmin Markdown instructions for ${agentId} agent:\n${markdown}\n`;
 };
 
-export const saveAgentOverride = async (agentId: EditableAgentId, override: string) => {
-  if (!agentDefinitions.some(agent => agent.id === agentId)) {
+const readAgentMarkdown = async (agent: AgentDefinition, legacyOverride?: string) => {
+  try {
+    return await readFile(markdownPath(agent.id), "utf8");
+  } catch (error) {
+    if (!(error instanceof Error && "code" in error && error.code === "ENOENT")) throw error;
+    const markdown = legacyOverride?.trim()
+      ? `# ${agent.label}
+
+## Role
+${agent.role}
+
+## Current Description
+${agent.currentDescription}
+
+## Admin Instructions
+${legacyOverride.trim()}
+`
+      : defaultAgentMarkdown(agent);
+    await mkdir(markdownDirectory(), { recursive: true });
+    await writeFile(markdownPath(agent.id), `${markdown.trim()}\n`, "utf8");
+    return `${markdown.trim()}\n`;
+  }
+};
+
+export const saveAgentMarkdown = async (agentId: EditableAgentId, markdown: string) => {
+  const agent = agentDefinitions.find(definition => definition.id === agentId);
+  if (!agent) {
     throw new Error(`Unknown editable agent: ${agentId}`);
   }
-  const cleaned = override.trim();
-  const overrides = await readOverrides();
-  if (cleaned) {
-    overrides[agentId] = cleaned;
-  } else {
-    delete overrides[agentId];
-  }
-  await mkdir(storeDirectory(), { recursive: true });
-  await writeFile(storePath(), `${JSON.stringify(overrides, null, 2)}\n`, "utf8");
-  return cleaned;
+  const cleaned = markdown.trim() || defaultAgentMarkdown(agent).trim();
+  await mkdir(markdownDirectory(), { recursive: true });
+  await writeFile(markdownPath(agentId), `${cleaned}\n`, "utf8");
+  return `${cleaned}\n`;
 };
 
 export const isEditableAgentId = (value: unknown): value is EditableAgentId =>

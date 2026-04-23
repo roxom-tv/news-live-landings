@@ -181,6 +181,16 @@
   line-height: 1.55;
 }
 
+.pathText {
+  display: block;
+  margin-top: 8px;
+  color: rgba(116, 209, 255, 0.72);
+  font-family: var(--font-mono), monospace;
+  font-size: 11px;
+  line-height: 1.45;
+  overflow-wrap: anywhere;
+}
+
 .actions {
   display: flex;
   gap: 10px;
