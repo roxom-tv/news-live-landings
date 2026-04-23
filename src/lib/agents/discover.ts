@@ -7,6 +7,8 @@ export type DiscoveryCandidate = {
   rationale: string;
   urgency: "low" | "medium" | "high";
   sourceUrls: string[];
+  newestSourcePublishedAt?: string;
+  freshnessEvidence?: string;
   visualPotential: "low" | "medium" | "high";
   score: number;
 };
@@ -25,6 +27,13 @@ export const discoverLiveTopic = async (hint?: string) => {
     useWebSearch: true,
     prompt: `
 Discover one timely, source-rich topic for a live news landing.
+
+Freshness gate:
+- The selected topic must have a meaningful new development, report, data release, quote, official action, market move, result, filing, or verified update from the last 8 hours.
+- If the user's hint points to an older broad story, select the freshest last-8-hours angle inside that story.
+- If no credible last-8-hours coverage exists for the hint, say so in the rationale and choose a different relevant topic that satisfies the 8-hour gate.
+- Prefer topics with multiple independent sources published or updated inside the last 8 hours.
+- Include newestSourcePublishedAt and freshnessEvidence for every candidate so the freshness decision is auditable.
 
 Sources and discovery:
 - Use current web search.
@@ -47,13 +56,19 @@ Return JSON:
       "rationale": string,
       "urgency": "low"|"medium"|"high",
       "sourceUrls": string[],
+      "newestSourcePublishedAt": string,
+      "freshnessEvidence": string,
       "visualPotential": "low"|"medium"|"high",
       "score": number
     }
   ]
 }
 
-Return 3-5 candidates. Scores must be 0-100 and grounded in source quality, urgency, landing suitability, and visual potential.
+Return 3-5 candidates. Scores must be 0-100 and grounded in source quality, last-8-hours freshness, urgency, landing suitability, and visual potential.
+Private red-team before returning:
+- Reject candidates whose newest credible source is older than 8 hours unless the source itself has an updated timestamp inside the window.
+- Reject topics that are merely evergreen, generic, or missing a clear "what changed now".
+- Prefer a topic that can become a complete top-line landing with clear sections, strong visuals, and enough source-backed context.
 ${adminOverride}
 `,
     fallback: () => ({
@@ -65,6 +80,8 @@ ${adminOverride}
           rationale: "Fallback candidate for the live landing pipeline.",
           urgency: "medium",
           sourceUrls: ["https://www.reuters.com/", "https://apnews.com/"],
+          newestSourcePublishedAt: new Date().toISOString(),
+          freshnessEvidence: "Fallback mode could not verify last-8-hours freshness with web search.",
           visualPotential: "medium",
           score: 50
         }

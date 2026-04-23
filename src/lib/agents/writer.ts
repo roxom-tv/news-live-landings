@@ -24,6 +24,7 @@ Every factual sentence must be supported by the source-bound facts in Research.
 Every section must include sourceUrls from the source list.
 Every quote and data point must include sourceUrl from the source list.
 Do not invent quotes. If exact quotation text is not present in the research, return an empty quotes array.
+Preserve the freshest angle: the headline, subheadline, summary, and first section must clearly explain what changed now, why it matters, and who or what is affected.
 Write like a premium magazine/news feature in the spirit of Vice: immersive, scene-setting, sharp, human, and narrative-driven, while staying factual and sourced.
 This must read as a real article, not a tiny dossier, not bullet-note intelligence, and not a product brief.
 Create 9-14 sections when the research supports it. Each section body should be 150-260 words and contain only sourced information.
@@ -48,6 +49,8 @@ Before returning JSON, run this private preflight and fix failures yourself:
 - No generic section titles remain unless the topic truly demands them.
 - Summary and subheadline are specific enough that a reader can understand the story without scrolling.
 - Data points are concrete, source-linked, and useful as top-line cards.
+- The writing gives Designer clear section intent, visualHint choices, and data/quote material so Critic should not need multiple repair loops.
+- If research is too thin for 9-14 strong sections, use fewer only when unavoidable, but make each one specific, sourced, and useful.
 ${adminOverride}
 Return JSON:
 {

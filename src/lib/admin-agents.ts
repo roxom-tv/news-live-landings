@@ -31,7 +31,7 @@ const agentDefinitions: Array<Omit<EditableAgent, "override">> = [
     filePath: "src/lib/agents/discover.ts",
     status: "active",
     currentDescription:
-      "Uses current web search to select one timely landing topic, preferring credible source coverage, urgency, strong visual potential, named actors, measurable deltas, and landing suitability. Returns 3-5 scored candidates plus the selected topic and rationale."
+      "Uses current web search to select one timely landing topic with a meaningful new development from the last 8 hours. It prefers credible source coverage, urgency, strong visual potential, named actors, measurable deltas, and landing suitability. Returns 3-5 scored candidates with freshness evidence plus the selected topic and rationale."
   },
   {
     id: "research",
@@ -40,7 +40,7 @@ const agentDefinitions: Array<Omit<EditableAgent, "override">> = [
     filePath: "src/lib/agents/research.ts",
     status: "active",
     currentDescription:
-      "Builds the factual source package for a requested topic. It gathers credible current sources, source-bound facts, image candidates, quotes, and data points that downstream writing and design agents must stay faithful to."
+      "Builds the factual source package for a requested topic, preserving the freshest current angle and last-8-hours developments when available. It gathers credible current sources, source-bound facts, image candidates, quotes, and data points that downstream writing and design agents must stay faithful to."
   },
   {
     id: "writer",
@@ -49,7 +49,7 @@ const agentDefinitions: Array<Omit<EditableAgent, "override">> = [
     filePath: "src/lib/agents/writer.ts",
     status: "active",
     currentDescription:
-      "Turns the research package into a structured editorial brief: headline, subheadline, summary, sections, quotes, data points, update history, and source usage. It is responsible for clear top-line news structure and source-grounded copy."
+      "Turns the research package into a structured editorial brief: headline, subheadline, summary, sections, quotes, data points, update history, and source usage. It owns first-pass top-line clarity: what changed now, why it matters, who is involved, current status, evidence, reactions, uncertainty, and next steps."
   },
   {
     id: "designer",
@@ -58,7 +58,7 @@ const agentDefinitions: Array<Omit<EditableAgent, "override">> = [
     filePath: "src/lib/agents/designer.ts",
     status: "active",
     currentDescription:
-      "Converts the written brief and research package into final LandingContent. It owns layout choice, visual hierarchy, hero treatment, visual relevance, section composition, source footer structure, and design spec. It also performs critic-requested repair revisions."
+      "Converts the written brief and research package into final LandingContent. It owns layout choice, first-viewport clarity, visual hierarchy, hero treatment, visual relevance, section composition, source footer structure, and design spec. It also performs critic-requested repair revisions and should produce near-publishable output before Critic sees it."
   },
   {
     id: "critic",
@@ -67,7 +67,7 @@ const agentDefinitions: Array<Omit<EditableAgent, "override">> = [
     filePath: "src/lib/agents/critic.ts",
     status: "active",
     currentDescription:
-      "Reviews the generated landing before publication. It checks source support, factual caution, banned or unsafe claims, section quality, top-line landing completeness, visual relevance, and whether the page should be approved, repaired, or blocked."
+      "Reviews the generated landing before publication as a red team. It checks source support, factual caution, unsafe claims, freshness, first-viewport clarity, section quality, visual relevance, and publication readiness. Its issues must be understandable and directly repairable."
   },
   {
     id: "publisher",
@@ -85,7 +85,7 @@ const agentDefinitions: Array<Omit<EditableAgent, "override">> = [
     filePath: "src/lib/agents/live.ts",
     status: "active",
     currentDescription:
-      "Uses current web search to monitor an already-live landing for net-new verified updates. It classifies materiality as no change, minor, important, critical, or blocker, and returns a sourced delta summary."
+      "Uses current web search to monitor an already-live landing for net-new verified updates, especially since lastUpdatedUtc and inside the last 8 hours. It classifies materiality as no change, minor, important, critical, or blocker, and returns a sourced delta summary."
   },
   {
     id: "liveUpdater",
@@ -94,7 +94,7 @@ const agentDefinitions: Array<Omit<EditableAgent, "override">> = [
     filePath: "src/lib/agents/live.ts",
     status: "active",
     currentDescription:
-      "Applies an important or critical monitor delta to the full LandingContent JSON. It preserves structure, source credits, article depth, relevant visuals, and the complete source list before the critic reviews the update."
+      "Applies an important or critical monitor delta to the full LandingContent JSON. It integrates the fresh update into the narrative and first viewport while preserving structure, source credits, article depth, relevant visuals, and the complete source list before Critic reviews the update."
   }
 ];
 

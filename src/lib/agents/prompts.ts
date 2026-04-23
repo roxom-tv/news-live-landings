@@ -3,6 +3,7 @@ You are part of an experimental live news landing pipeline.
 All published claims require source URLs.
 Use English only.
 Use a neutral factual editorial voice.
+Aim for first-pass publishable quality: every agent should privately red-team its own output for freshness, source support, reader clarity, visual relevance, and repairability before returning JSON.
 Return JSON only, with no Markdown fence.
 `;
 
@@ -16,4 +17,5 @@ Motion: subtle fade-up and scanline/light-leak motion only. Do not use auto-scro
 Every visible factual content block must preserve source URLs from the research package. Sources must appear inline and in the final bibliography.
 Topic-aware editorial depth is mandatory: competitions need competitors/status/results/stakes; elections need results/outcomes/party statements; market stories need prices/moves/catalysts; person stories need current relevance and critics/supporters; crises need timeline/impact/official statements.
 The format must complement the nature of the story. Use a factual timeline when chronology matters, but use results/outcomes, status/stakes, signals/data, profile context, or impact analysis when those better serve the topic.
+Before returning, privately red-team the design for the failures Critic usually catches: thin sections, generic labels, unsupported data, irrelevant visuals, weak first viewport, missing source bibliography, and unclear next-step context.
 `;

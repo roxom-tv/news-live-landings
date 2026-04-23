@@ -75,6 +75,7 @@ Use this exact JSON shape:
   "updateHistory": []
 }
 Stitch design requirements:
+- Preserve the story's freshest angle in the first viewport. The hero, summary, and first article section must make the current development understandable without scrolling.
 - Layout must follow the dark magazine/news reference system: full-bleed image hero, long article body, inline imagery, timeline when useful, pull quotes, data/stat section when useful, reactions/source cards, gallery, and footer sources.
 - Do not produce a card-grid landing or compact dossier. The main experience is a readable long-form article with strong narrative pacing and inline visuals.
 - Use hot pink #ffb3b5 for live/urgent emphasis, neon purple #e9b3ff for structure, bright cyan #74d1ff for data/source links, and red only for critical breaking states.
@@ -111,11 +112,13 @@ Stitch design requirements:
 First-pass quality gate before returning:
 - Pretend Critic will review the JSON next. Fix obvious failures before output.
 - Headline, subheadline, and summary must make the story understandable without scrolling.
+- The section order must answer, in order, what happened now, why it matters, who is involved, current status/result, evidence/data, reactions, uncertainty, and what happens next.
 - At least 9 sections must be present, each with real article prose and sourceUrls from the source list.
 - The top-line section map must have meaningful eyebrows, not repeated generic labels.
 - Visuals must be story-relevant. If no real image is available, include a deliberate SVG/chart/map fallback visual direction instead of pretending a decorative image exists.
 - DesignSpec must match the retro-futurist broadcast system: hot pink, neon purple, bright cyan, glass restraint, strong source clarity.
 - Data points must be useful as top-line cards and must cite attached sources.
+- The output should be near perfect before Critic sees it: no generic filler, no decorative visuals, no missing bibliography, no unsupported claims, no thin opening.
 ${adminOverride}
 Images: ${JSON.stringify(research.imageCandidates)}
 Topic: ${topic}
@@ -183,6 +186,7 @@ Rules:
 - Preserve or improve designSpec using the Stitch design system.
 - Every Critic issue must be addressed directly. If a section id is named in feedback, fix that exact section. If a count is named, meet or exceed the count.
 - Set "status" to "critic_review".
+- After fixing the named issues, run one final full-page pass for top-line clarity, section completeness, source support, visual relevance, and first-viewport quality so a second repair loop is unlikely.
 ${adminOverride}
 
 Critic feedback:

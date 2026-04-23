@@ -51,6 +51,11 @@ export const runResearch = async (topic: string) => {
 Research this live news landing topic: "${topic}".
 Use current web sources. Prefer AP, Reuters, Google News results, Bloomberg, BBC, NYT, FT, WSJ, CNBC, CoinDesk, and any other source deemed relevant by legacy and new media standards.
 Every fact must be source-bound. Do not include a claim unless it has a sourceUrl from the returned sources list.
+Freshness and relevance:
+- Identify what changed now. Prefer sources published or updated in the last 8 hours when available.
+- If the topic came from Discover, preserve the fresh angle instead of broadening into an old evergreen explainer.
+- Include older background only when it explains the new development, and label it as context through the factual claim.
+- Avoid source packages that are only headlines. Gather enough substance for Writer and Designer to build a near-publishable landing on the first pass.
 Find more than a headline: gather chronology, actors, numbers, official statements, market/geopolitical context, human stakes, power dynamics, social/market reactions, visual scene details, and what to watch next.
 Collect enough detail to support a long-form magazine/news article, not a short dossier.
 Gather a facts timeline when chronology is relevant and enough dates/events are available. Do not force a timeline for stories where the better structure is results, standings, market signals, profile context, or impact analysis.
@@ -72,6 +77,12 @@ Return JSON:
   "visualDirections": string[]
 }
 Minimum eight credible sources when available. Minimum twenty source-bound facts when available. No unsupported claims.
+Private red-team before returning:
+- Does the package explain the current angle in one clear sentence?
+- Can the first three landing sections be written from these facts without guessing?
+- Are there enough actors/entities, numbers, quotes/reactions, and next-step facts for a complete top-line landing?
+- Are image candidates relevant enough that Designer will not need decorative filler?
+- Remove weak facts, unsupported claims, duplicate sources, and image candidates whose relevance is not obvious.
 ${adminOverride}
 `,
     fallback: () => {
