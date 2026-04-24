@@ -20,11 +20,6 @@ const normalizeVisualKey = (visual: Pick<VisualAsset, "url" | "title" | "credit"
   }
 };
 
-const sourceLabel = (content: LandingContent, sourceUrl: string) => {
-  const source = content.sources.find(item => item.url === sourceUrl);
-  return source ? source.outlet : "Source";
-};
-
 const trimSentenceExcerpt = (text: string, maxLength = 220) => {
   const normalized = text.replace(/\s+/g, " ").trim();
   if (!normalized) return "";
@@ -99,16 +94,13 @@ function SectionMedia({
       <div className={styles.chartCard} aria-label="Data visual">
         <div className={styles.chartCardHeader}>
           <strong>{section.title}</strong>
-          <span>Sourced comparison</span>
+          <span>Story comparison</span>
         </div>
         <div className={styles.chartRows}>
           {points.map((point, pointIndex) => {
             const magnitude = pointMagnitude(point.value);
             return (
-              <a
-                href={point.sourceUrl}
-                target="_blank"
-                rel="noreferrer"
+              <div
                 key={`${point.label}-${point.value}`}
                 className={styles.chartRow}
               >
@@ -127,7 +119,7 @@ function SectionMedia({
                     {point.value}
                   </span>
                 </div>
-              </a>
+              </div>
             );
           })}
         </div>
@@ -159,7 +151,6 @@ export function LandingRenderer({ content }: { content: LandingContent }) {
   const heroTags = [content.designSpec?.layout?.replace("-", " "), content.topic].filter(Boolean).slice(0, 2);
   const storyMapSections = content.sections.slice(0, 5);
   const visibleUpdates = content.updateHistory.filter(update => !/fallback|repair|critic/i.test(update.summary));
-  const reactionSources = content.sources.slice(0, 3);
   const explainerPoints = content.dataPoints.slice(0, 5);
   const metricCards = content.dataPoints.slice(0, 4);
   const availableSectionImages = [...articleImages];
@@ -190,19 +181,16 @@ export function LandingRenderer({ content }: { content: LandingContent }) {
     ? visibleUpdates.slice(0, 4).map(update => ({
         label: update.materiality,
         time: new Date(update.timestampUtc).toLocaleString(),
-        body: trimSentenceExcerpt(update.summary, 140),
-        href: update.sourceUrls[0]
+        body: trimSentenceExcerpt(update.summary, 140)
       }))
-    : content.sources.slice(0, 4).map(source => ({
-        label: source.outlet,
-        time: source.publishedAt ? new Date(source.publishedAt).toLocaleDateString() : "Current source",
-        body: trimSentenceExcerpt(source.title, 140),
-        href: source.url
+    : content.sections.slice(0, 4).map((section, index) => ({
+        label: section.eyebrow,
+        time: index === 0 ? "Current brief" : `Section ${String(index + 1).padStart(2, "0")}`,
+        body: trimSentenceExcerpt(section.body, 140)
       })));
-  const tickerItems = (liveFeedItems.length > 0 ? liveFeedItems : content.sources.slice(0, 3).map(source => ({
-    label: source.outlet,
-    body: source.title,
-    href: source.url
+  const tickerItems = (liveFeedItems.length > 0 ? liveFeedItems : content.sections.slice(0, 3).map(section => ({
+    label: section.eyebrow,
+    body: trimSentenceExcerpt(section.title, 96)
   }))).slice(0, 4);
   const navSections = storyMapSections.slice(0, 4);
   const railSections = content.sections.slice(0, 8);
@@ -214,11 +202,11 @@ export function LandingRenderer({ content }: { content: LandingContent }) {
       <div className={styles.topTicker} aria-label="Live alert ticker">
         <div className={styles.topTickerTrack}>
           {[...tickerItems, ...tickerItems].map((item, index) => (
-            <a href={item.href} target="_blank" rel="noreferrer" key={`${item.label}-${index}`} className={styles.topTickerItem}>
+            <div key={`${item.label}-${index}`} className={styles.topTickerItem}>
               <span>{tickerIcon(item.label)}</span>
               <strong>{item.label}</strong>
               <p>{item.body}</p>
-            </a>
+            </div>
           ))}
         </div>
       </div>
@@ -281,18 +269,18 @@ export function LandingRenderer({ content }: { content: LandingContent }) {
                 </motion.div>
                 <div className={styles.heroMetricStack}>
                   {leadMetric && (
-                    <a href={leadMetric.sourceUrl} target="_blank" rel="noreferrer" className={styles.heroMetricCard}>
+                    <div className={styles.heroMetricCard}>
                       <span>{leadMetric.label}</span>
                       <strong>{leadMetric.value}</strong>
-                      <small>{sourceLabel(content, leadMetric.sourceUrl)}</small>
-                    </a>
+                      <small>{leadMetric.context}</small>
+                    </div>
                   )}
                   {secondaryMetric && (
-                    <a href={secondaryMetric.sourceUrl} target="_blank" rel="noreferrer" className={`${styles.heroMetricCard} ${styles.heroMetricCardAlt}`}>
+                    <div className={`${styles.heroMetricCard} ${styles.heroMetricCardAlt}`}>
                       <span>{secondaryMetric.label}</span>
                       <strong>{secondaryMetric.value}</strong>
-                      <small>{sourceLabel(content, secondaryMetric.sourceUrl)}</small>
-                    </a>
+                      <small>{secondaryMetric.context}</small>
+                    </div>
                   )}
                 </div>
               </div>
@@ -304,11 +292,11 @@ export function LandingRenderer({ content }: { content: LandingContent }) {
                 </div>
                 <div className={styles.liveFeedList}>
                   {liveFeedItems.map((item, index) => (
-                    <a href={item.href} target="_blank" rel="noreferrer" key={`${item.label}-${index}`} className={styles.liveFeedItem}>
+                    <div key={`${item.label}-${index}`} className={styles.liveFeedItem}>
                       <small>{item.time}</small>
                       <strong>{item.label}</strong>
                       <p>{item.body}</p>
-                    </a>
+                    </div>
                   ))}
                 </div>
               </aside>
@@ -355,16 +343,6 @@ export function LandingRenderer({ content }: { content: LandingContent }) {
                   <span className={styles.articleEyebrow}>{section.eyebrow}</span>
                   <h2>{section.title}</h2>
                   <p className={isLeadSection ? styles.articleLeadBody : undefined}>{section.body}</p>
-                  <div className={styles.sourceTags} aria-label="Sources for this section">
-                    {section.sourceUrls.slice(0, 2).map((sourceUrl, sourceIndex) => (
-                      <a href={sourceUrl} target="_blank" rel="noreferrer" key={sourceUrl}>
-                        {sourceLabel(content, sourceUrl)} {sourceIndex + 1}
-                      </a>
-                    ))}
-                    {section.sourceUrls.length > 2 && (
-                      <span className={styles.moreSources}>+{section.sourceUrls.length - 2} more sources</span>
-                    )}
-                  </div>
                   {shouldShowMedia && <SectionMedia section={section} visual={visual} index={index} content={content} />}
                   {!shouldShowMedia && (section.visualHint === "chart" || section.visualHint === "data" || section.visualHint === "map") && (
                     <SectionMedia section={section} index={index} content={content} />
@@ -390,7 +368,6 @@ export function LandingRenderer({ content }: { content: LandingContent }) {
                   <p>{quote.quote}</p>
                   <footer>
                     <strong>{quote.attribution}</strong>
-                    <a href={quote.sourceUrl} target="_blank" rel="noreferrer">{sourceLabel(content, quote.sourceUrl)}</a>
                   </footer>
                 </blockquote>
               ))}
@@ -407,21 +384,20 @@ export function LandingRenderer({ content }: { content: LandingContent }) {
           </div>
           <div className={styles.statGrid}>
             {content.dataPoints.slice(0, 8).map(point => (
-              <a className={styles.statCard} href={point.sourceUrl} target="_blank" rel="noreferrer" key={`${point.label}-${point.value}`}>
+              <div className={styles.statCard} key={`${point.label}-${point.value}`}>
                 <span>{point.label}</span>
                 <strong>{point.value}</strong>
                 <p>{point.context}</p>
-                <small>{sourceLabel(content, point.sourceUrl)}</small>
-              </a>
+              </div>
             ))}
           </div>
           {content.dataPoints.length >= 2 && (
             <div className={styles.chartWrapper}>
-              <p>Data from the story</p>
+              <p>Data in the story</p>
               <small>{content.dataPoints.slice(0, 3).map(point => point.label).join(" · ")}</small>
               <div className={styles.sourceChart} aria-label="Chart based on sourced data points">
                 {dataMagnitudes.map((point, index) => (
-                  <a href={point.sourceUrl} target="_blank" rel="noreferrer" key={`${point.label}-${point.value}`} className={styles.sourceChartRow}>
+                  <div key={`${point.label}-${point.value}`} className={styles.sourceChartRow}>
                     <div>
                       <strong>{point.label}</strong>
                       <small>{point.context}</small>
@@ -434,32 +410,11 @@ export function LandingRenderer({ content }: { content: LandingContent }) {
                     >
                       {point.value}
                     </span>
-                  </a>
+                  </div>
                 ))}
               </div>
             </div>
             )}
-            </div>
-          </section>
-
-          <section className={styles.reactionsSection} aria-label="Reactions and perspectives">
-            <div className={styles.containerWide}>
-            <div className={styles.sectionLabel}>
-              <span>Reporting Threads</span>
-              <i aria-hidden="true" />
-            </div>
-            <div className={styles.reactionsGrid}>
-              {reactionSources.map(source => (
-                <a className={styles.reactionCard} href={source.url} target="_blank" rel="noreferrer" key={source.url}>
-                  <span aria-hidden="true">{source.outlet.slice(0, 2).toUpperCase()}</span>
-                  <div>
-                  <strong>{source.outlet}</strong>
-                  <small>{source.credibility}</small>
-                </div>
-                <p>{source.title}</p>
-              </a>
-            ))}
-            </div>
             </div>
           </section>
 
@@ -508,7 +463,7 @@ export function LandingRenderer({ content }: { content: LandingContent }) {
           </div>
           <div className={styles.sourcesIntro}>
             <p>
-              Reporting is linked inline where each section makes its core claims. The full reading list is here if you want to audit or go deeper.
+              This is the full reading list behind the landing. Every external source link lives here so the story can read cleanly before you audit it.
             </p>
             <span>{content.sources.length} sources · Updated {new Date(content.lastUpdatedUtc).toLocaleString()}</span>
           </div>
