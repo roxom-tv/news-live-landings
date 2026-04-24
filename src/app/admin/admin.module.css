@@ -3,211 +3,325 @@
   padding: 40px 32px 72px;
   color: #fff;
   background:
-    radial-gradient(circle at 16% 0%, rgba(255, 179, 181, 0.14), transparent 28rem),
-    radial-gradient(circle at 84% 8%, rgba(116, 209, 255, 0.12), transparent 26rem),
+    radial-gradient(circle at 12% 0%, rgba(255, 179, 181, 0.18), transparent 28rem),
+    radial-gradient(circle at 86% 2%, rgba(116, 209, 255, 0.14), transparent 30rem),
+    radial-gradient(circle at 52% 18%, rgba(233, 179, 255, 0.1), transparent 34rem),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.02), transparent 14rem),
     #060707;
 }
 
 .hero,
-.editor {
-  max-width: 1280px;
+.workspace {
+  max-width: 1400px;
   margin: 0 auto;
 }
 
 .hero {
-  padding: 48px 0 28px;
+  padding: 36px 0 28px;
 }
 
-.hero p,
-.panelHeader p,
+.heroEyebrowRow,
+.sidebarHeader,
+.sectionHeading,
+.panelTitleGroup p,
 .tokenField span,
-.agentButton small,
-.activeAgent small,
-.status {
+.searchField span,
+.blockLabel,
+.cardEyebrow,
+.statusMeta span,
+.heroStatus,
+.inlineStatus,
+.agentCounts span {
   font-family: var(--font-mono), monospace;
   font-size: 10px;
   font-weight: 800;
-  letter-spacing: 1.5px;
+  letter-spacing: 1.4px;
   text-transform: uppercase;
 }
 
-.hero p,
-.panelHeader p {
-  margin: 0 0 14px;
+.heroEyebrowRow {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  margin-bottom: 14px;
+}
+
+.heroEyebrowRow p,
+.panelTitleGroup p,
+.sectionHeading p,
+.sidebarHeader p {
+  margin: 0;
   color: var(--primary);
 }
 
+.heroStatus,
+.inlineStatus {
+  display: inline-flex;
+  align-items: center;
+  min-height: 28px;
+  padding: 0 12px;
+  color: var(--tertiary);
+  background: rgba(116, 209, 255, 0.08);
+  border: 1px solid rgba(116, 209, 255, 0.24);
+  border-radius: 999px;
+}
+
 .hero h1 {
-  max-width: 820px;
+  max-width: 960px;
   margin: 0;
-  font-size: clamp(38px, 7vw, 78px);
+  font-size: clamp(42px, 7vw, 84px);
   font-weight: 850;
-  line-height: 0.96;
-  letter-spacing: -0.03em;
+  line-height: 0.94;
+  letter-spacing: -0.04em;
 }
 
 .hero > span {
   display: block;
-  max-width: 680px;
+  max-width: 760px;
   margin-top: 20px;
-  color: rgba(255, 255, 255, 0.68);
-  font-size: 17px;
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 18px;
+  line-height: 1.6;
+}
+
+.workspace {
+  display: grid;
+  gap: 20px;
+}
+
+.overviewGrid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.overviewCard,
+.sidebarSection,
+.pipelineSection,
+.panel,
+.flowCard,
+.editorCard,
+.descriptionBlock,
+.metaCard,
+.statusBar {
+  background: linear-gradient(180deg, rgba(31, 19, 38, 0.84), rgba(8, 10, 13, 0.88));
+  border: 1px solid rgba(233, 179, 255, 0.18);
+  border-radius: 8px;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.03),
+    0 16px 44px rgba(0, 0, 0, 0.28),
+    0 0 30px rgba(255, 79, 216, 0.05);
+  backdrop-filter: blur(20px);
+}
+
+.overviewCard {
+  position: relative;
+  overflow: hidden;
+  padding: 18px;
+}
+
+.overviewCard::after {
+  position: absolute;
+  inset: auto 0 0 0;
+  height: 2px;
+  content: "";
+  background: linear-gradient(90deg, var(--primary), var(--secondary), var(--tertiary));
+  opacity: 0.85;
+}
+
+.cardEyebrow {
+  color: rgba(255, 255, 255, 0.58);
+}
+
+.overviewCard strong {
+  display: block;
+  margin-top: 16px;
+  font-size: clamp(26px, 4vw, 42px);
+  line-height: 1;
+}
+
+.overviewCard p {
+  margin: 12px 0 0;
+  color: rgba(255, 255, 255, 0.64);
   line-height: 1.55;
 }
 
 .editor {
   display: grid;
-  grid-template-columns: 340px minmax(0, 1fr);
+  grid-template-columns: 360px minmax(0, 1fr);
   gap: 20px;
-}
-
-.sidebar,
-.panel {
-  background: rgba(19, 13, 25, 0.78);
-  border: 1px solid rgba(233, 179, 255, 0.22);
-  border-radius: 6px;
-  box-shadow: 0 0 34px rgba(255, 79, 216, 0.08);
-  backdrop-filter: blur(20px);
+  align-items: start;
 }
 
 .sidebar {
+  position: sticky;
+  top: 24px;
+  display: grid;
+  gap: 18px;
+}
+
+.sidebarSection,
+.pipelineSection,
+.panel {
   padding: 18px;
 }
 
-.tokenField {
+.sidebarHeader,
+.sectionHeading {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  align-items: flex-start;
+  margin-bottom: 16px;
+}
+
+.sidebarHeader h2,
+.sectionHeading h2,
+.panelHeader h2 {
+  margin: 6px 0 0;
+  font-size: clamp(22px, 2.6vw, 34px);
+  line-height: 1;
+}
+
+.sectionHeading span,
+.sidebarHeader + *,
+.panelTitleGroup > span,
+.editorCardHeader p,
+.flowCardHeader p,
+.metaCard p,
+.descriptionBlock p,
+.statusBar p,
+.empty p {
+  color: rgba(255, 255, 255, 0.66);
+  line-height: 1.58;
+}
+
+.tokenField,
+.searchField {
   display: grid;
   gap: 8px;
 }
 
-.tokenField span {
+.tokenField span,
+.searchField span,
+.blockLabel {
   color: var(--tertiary);
 }
 
-.tokenField input {
+.tokenField input,
+.searchField input,
+.textarea {
   width: 100%;
-  min-height: 44px;
-  padding: 0 12px;
   color: #fff;
-  background: rgba(6, 7, 7, 0.7);
+  background: rgba(4, 6, 8, 0.74);
   border: 1px solid rgba(255, 255, 255, 0.12);
-  border-radius: 4px;
+  border-radius: 6px;
   outline: none;
 }
 
+.tokenField input,
+.searchField input {
+  min-height: 46px;
+  padding: 0 14px;
+}
+
 .tokenField input:focus,
+.searchField input:focus,
 .textarea:focus {
-  border-color: rgba(116, 209, 255, 0.72);
-  box-shadow: 0 0 0 3px rgba(116, 209, 255, 0.1);
+  border-color: rgba(116, 209, 255, 0.78);
+  box-shadow: 0 0 0 3px rgba(116, 209, 255, 0.12);
+}
+
+.sidebarActions {
+  display: flex;
+  gap: 10px;
+  margin-top: 14px;
+}
+
+.filterRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 16px;
+}
+
+.filterChip,
+.filterChipActive,
+.stageName,
+.addStageButton,
+.flowActions button,
+.primaryButton,
+.secondaryButton {
+  min-height: 36px;
+  padding: 0 12px;
+  font-family: var(--font-mono), monospace;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.9px;
+  text-transform: uppercase;
+  cursor: pointer;
+  border-radius: 999px;
+}
+
+.filterChip,
+.stageName,
+.addStageButton,
+.flowActions button,
+.secondaryButton {
+  color: rgba(255, 255, 255, 0.84);
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.filterChipActive {
+  color: #060707;
+  background: var(--tertiary);
+  border: 1px solid var(--tertiary);
+}
+
+.agentCounts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 14px;
+}
+
+.agentCounts span {
+  padding: 6px 10px;
+  color: rgba(255, 255, 255, 0.72);
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 999px;
 }
 
 .agentList {
   display: grid;
-  gap: 8px;
+  gap: 10px;
   margin-top: 18px;
-}
-
-.pipelineBlock {
-  margin-top: 22px;
-  padding-top: 18px;
-  border-top: 1px solid rgba(255, 255, 255, 0.08);
-}
-
-.blockLabel {
-  display: block;
-  margin-bottom: 12px;
-  color: var(--tertiary);
-  font-family: var(--font-mono), monospace;
-  font-size: 10px;
-  font-weight: 800;
-  letter-spacing: 1.5px;
-  text-transform: uppercase;
-}
-
-.flowCard {
-  display: grid;
-  gap: 10px;
-  margin-bottom: 14px;
-  padding: 12px;
-  background: rgba(255, 255, 255, 0.035);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 4px;
-}
-
-.flowCard strong {
-  font-size: 14px;
-}
-
-.flowStages,
-.flowAddList {
-  display: grid;
-  gap: 8px;
-}
-
-.flowStage {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
-  gap: 10px;
-  align-items: center;
-  padding: 10px;
-  background: rgba(6, 7, 7, 0.52);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 4px;
-}
-
-.stageName,
-.addStageButton,
-.flowActions button {
-  min-height: 34px;
-  color: #fff;
-  font-family: var(--font-mono), monospace;
-  font-size: 10px;
-  font-weight: 800;
-  letter-spacing: 0.8px;
-  text-transform: uppercase;
-  cursor: pointer;
-  background: rgba(255, 255, 255, 0.06);
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  border-radius: 999px;
-}
-
-.stageName,
-.addStageButton {
-  padding: 0 12px;
-  text-align: left;
-}
-
-.flowActions {
-  display: flex;
-  gap: 6px;
-  flex-wrap: wrap;
-}
-
-.flowActions button {
-  padding: 0 10px;
-}
-
-.flowActions button:disabled {
-  cursor: not-allowed;
-  opacity: 0.45;
+  max-height: 62vh;
+  overflow: auto;
+  padding-right: 4px;
 }
 
 .agentButton,
 .activeAgent {
   display: grid;
-  gap: 7px;
+  gap: 8px;
   width: 100%;
   padding: 14px;
   color: inherit;
   text-align: left;
   cursor: pointer;
-  background: rgba(255, 255, 255, 0.045);
+  background: rgba(255, 255, 255, 0.035);
   border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 4px;
+  border-radius: 6px;
 }
 
-.activeAgent {
-  background: rgba(255, 179, 181, 0.12);
-  border-color: rgba(255, 179, 181, 0.38);
+.agentButtonTop {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
 }
 
 .agentButton span,
@@ -215,10 +329,16 @@
   font-weight: 800;
 }
 
+.activeAgent {
+  background: linear-gradient(180deg, rgba(255, 179, 181, 0.16), rgba(255, 255, 255, 0.04));
+  border-color: rgba(255, 179, 181, 0.36);
+  box-shadow: 0 0 24px rgba(255, 79, 216, 0.08);
+}
+
 .agentButton em,
 .activeAgent em {
   width: max-content;
-  padding: 3px 7px;
+  padding: 4px 8px;
   color: #060707;
   font-family: var(--font-mono), monospace;
   font-size: 9px;
@@ -226,54 +346,189 @@
   font-weight: 900;
   letter-spacing: 0.8px;
   text-transform: uppercase;
-  background: var(--tertiary);
+  background: var(--secondary);
   border-radius: 999px;
 }
 
 .agentButton small,
 .activeAgent small {
-  color: rgba(255, 255, 255, 0.48);
-  line-height: 1.4;
-  text-transform: none;
-  letter-spacing: 0.2px;
+  color: rgba(255, 255, 255, 0.6);
+  line-height: 1.45;
+}
+
+.agentPath {
+  color: rgba(116, 209, 255, 0.7) !important;
+  overflow-wrap: anywhere;
+}
+
+.unsavedDot {
+  width: 10px;
+  height: 10px;
+  background: var(--primary-hot);
+  border-radius: 999px;
+  box-shadow: 0 0 12px rgba(255, 79, 216, 0.9);
+}
+
+.emptyList {
+  padding: 18px;
+  color: rgba(255, 255, 255, 0.56);
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px dashed rgba(255, 255, 255, 0.12);
+  border-radius: 6px;
+}
+
+.mainColumn {
+  display: grid;
+  gap: 20px;
+}
+
+.flowGrid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.flowCard {
+  padding: 16px;
+}
+
+.flowCardHeader {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  align-items: flex-start;
+  margin-bottom: 12px;
+}
+
+.flowCardHeader strong {
+  font-size: 18px;
+}
+
+.flowCardHeader p {
+  margin: 8px 0 0;
+}
+
+.flowStages,
+.flowAddList {
+  display: grid;
+  gap: 10px;
+}
+
+.flowStage {
+  display: grid;
+  gap: 12px;
+  padding: 12px;
+  background: rgba(255, 255, 255, 0.035);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 6px;
+}
+
+.flowStageMeta {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.flowStageIndex {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  color: #060707;
+  font-family: var(--font-mono), monospace;
+  font-size: 11px;
+  font-weight: 900;
+  background: var(--primary);
+  border-radius: 999px;
+}
+
+.stageName {
+  flex: 1;
+  justify-content: flex-start;
+  text-align: left;
+}
+
+.flowActions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.flowActions button:disabled,
+.primaryButton:disabled,
+.secondaryButton:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+.flowAddSection {
+  margin-top: 14px;
+  padding-top: 14px;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
 }
 
 .panel {
-  min-height: 680px;
-  padding: 22px;
+  min-height: 720px;
 }
 
 .panelHeader {
-  display: flex;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 320px;
   gap: 20px;
-  align-items: flex-start;
-  justify-content: space-between;
+  align-items: start;
   margin-bottom: 18px;
 }
 
-.panelHeader h2 {
-  margin: 0;
-  font-size: clamp(24px, 3vw, 38px);
-  line-height: 1;
+.panelTitleGroup {
+  min-width: 0;
 }
 
-.panelHeader span,
-.empty p {
-  display: block;
-  max-width: 720px;
-  margin-top: 10px;
-  color: rgba(255, 255, 255, 0.62);
-  line-height: 1.55;
+.titleRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: center;
+  margin-top: 6px;
+}
+
+.draftBadge {
+  display: inline-flex;
+  align-items: center;
+  min-height: 28px;
+  padding: 0 12px;
+  color: #060707;
+  font-family: var(--font-mono), monospace;
+  font-size: 10px;
+  font-weight: 900;
+  letter-spacing: 0.9px;
+  text-transform: uppercase;
+  background: var(--primary);
+  border-radius: 999px;
 }
 
 .pathText {
   display: block;
-  margin-top: 8px;
-  color: rgba(116, 209, 255, 0.72);
+  margin-top: 12px;
+  color: rgba(116, 209, 255, 0.78);
   font-family: var(--font-mono), monospace;
   font-size: 11px;
-  line-height: 1.45;
+  line-height: 1.5;
   overflow-wrap: anywhere;
+}
+
+.panelHeaderMeta {
+  display: grid;
+  gap: 12px;
+  padding: 16px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 6px;
+}
+
+.panelHeaderMeta p {
+  margin: 0;
+  color: rgba(255, 255, 255, 0.62);
 }
 
 .actions {
@@ -281,10 +536,121 @@
   gap: 10px;
 }
 
+.primaryButton,
+.secondaryButton {
+  min-height: 42px;
+}
+
+.primaryButton {
+  color: #060707;
+  background: linear-gradient(90deg, var(--primary), #ffd0d1);
+  border: 1px solid var(--primary);
+}
+
+.infoGrid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.6fr) repeat(2, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.descriptionBlock,
+.metaCard {
+  padding: 16px;
+}
+
+.descriptionBlock span,
+.metaCard span {
+  display: block;
+  margin-bottom: 10px;
+  color: var(--tertiary);
+  font-family: var(--font-mono), monospace;
+  font-size: 10px;
+  font-weight: 900;
+  letter-spacing: 1.1px;
+  text-transform: uppercase;
+}
+
+.descriptionBlock p,
+.metaCard p {
+  margin: 0;
+}
+
+.metaCard p + p {
+  margin-top: 6px;
+}
+
+.editorCard {
+  margin-top: 14px;
+  padding: 16px;
+}
+
+.editorCardHeader {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  align-items: flex-start;
+  margin-bottom: 14px;
+}
+
+.editorCardHeader p {
+  margin: 10px 0 0;
+}
+
+.textarea {
+  min-height: 560px;
+  padding: 18px;
+  color: rgba(255, 255, 255, 0.92);
+  font-family: var(--font-mono), monospace;
+  font-size: 13px;
+  line-height: 1.65;
+  resize: vertical;
+}
+
+.statusBar {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 18px;
+  align-items: start;
+  margin-top: 14px;
+  padding: 16px;
+}
+
+.statusBar p {
+  margin: 10px 0 0;
+}
+
+.statusBar[data-state="saved"] {
+  border-color: rgba(26, 231, 132, 0.28);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.03),
+    0 16px 44px rgba(0, 0, 0, 0.28),
+    0 0 26px rgba(26, 231, 132, 0.08);
+}
+
+.statusBar[data-state="error"] {
+  border-color: rgba(255, 138, 144, 0.34);
+}
+
+.statusMeta {
+  display: grid;
+  gap: 8px;
+  justify-items: end;
+}
+
+.statusMeta span {
+  display: inline-flex;
+  align-items: center;
+  min-height: 28px;
+  padding: 0 10px;
+  color: rgba(255, 255, 255, 0.78);
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 999px;
+}
+
 .activeBadge,
 .roleBadge {
-  flex: 0 0 auto;
-  margin-top: 2px;
+  width: max-content;
   padding: 8px 10px;
   font-family: var(--font-mono), monospace;
   font-size: 10px;
@@ -300,138 +666,90 @@
 }
 
 .roleBadge {
-  color: rgba(255, 255, 255, 0.82);
+  color: rgba(255, 255, 255, 0.84);
   background: rgba(255, 255, 255, 0.08);
   border: 1px solid rgba(255, 255, 255, 0.14);
 }
 
-.descriptionBlock {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
-  gap: 16px;
-  align-items: start;
-  margin: 0 0 16px;
-  padding: 16px;
-  background: rgba(6, 7, 7, 0.48);
-  border: 1px solid rgba(116, 209, 255, 0.16);
-  border-radius: 4px;
-}
-
-.descriptionBlock span {
-  display: block;
-  margin-bottom: 8px;
-  color: var(--tertiary);
-  font-family: var(--font-mono), monospace;
-  font-size: 10px;
-  font-weight: 900;
-  letter-spacing: 1.2px;
-  text-transform: uppercase;
-}
-
-.descriptionBlock p {
-  margin: 0;
-  color: rgba(255, 255, 255, 0.72);
-  line-height: 1.55;
-}
-
-.descriptionBlock .secondaryButton {
-  margin-top: 0;
-  white-space: nowrap;
-}
-
-.primaryButton,
-.secondaryButton {
-  min-height: 42px;
-  padding: 0 14px;
-  color: #fff;
-  font-family: var(--font-mono), monospace;
-  font-size: 10px;
-  font-weight: 800;
-  letter-spacing: 1px;
-  text-transform: uppercase;
-  cursor: pointer;
-  border-radius: 999px;
-}
-
-.primaryButton {
-  color: #060707;
-  background: var(--primary);
-  border: 1px solid var(--primary);
-}
-
-.secondaryButton {
-  margin-top: 12px;
-  background: rgba(6, 7, 7, 0.58);
-  border: 1px solid rgba(255, 255, 255, 0.14);
-}
-
-.primaryButton:disabled,
-.secondaryButton:disabled {
-  cursor: wait;
-  opacity: 0.7;
-}
-
-.textarea {
-  width: 100%;
-  min-height: 500px;
-  padding: 18px;
-  color: rgba(255, 255, 255, 0.9);
-  font-family: var(--font-mono), monospace;
-  font-size: 13px;
-  line-height: 1.65;
-  resize: vertical;
-  background: rgba(6, 7, 7, 0.74);
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  border-radius: 4px;
-  outline: none;
-}
-
-.status {
-  min-height: 42px;
-  margin-top: 14px;
-  color: rgba(255, 255, 255, 0.5);
-  line-height: 1.5;
-}
-
-.status[data-state="saved"] {
-  color: var(--signal-green);
-}
-
-.status[data-state="error"] {
-  color: #ff8a90;
-}
-
 .empty {
-  padding: 48px;
+  padding: 56px 32px;
 }
 
 .empty h2 {
   margin: 0;
 }
 
-@media (max-width: 900px) {
+@media (max-width: 1180px) {
+  .overviewGrid,
+  .flowGrid,
+  .infoGrid,
+  .panelHeader {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .infoGrid {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .descriptionBlock {
+    grid-column: 1 / -1;
+  }
+}
+
+@media (max-width: 980px) {
   .admin {
     padding: 28px 20px 56px;
   }
 
-  .editor {
+  .overviewGrid,
+  .editor,
+  .flowGrid,
+  .panelHeader,
+  .infoGrid,
+  .statusBar {
     grid-template-columns: 1fr;
   }
 
-  .panelHeader {
+  .sidebar {
+    position: static;
+  }
+
+  .agentList {
+    max-height: none;
+  }
+
+  .actions,
+  .sidebarActions {
     flex-direction: column;
   }
 
-  .descriptionBlock {
-    grid-template-columns: 1fr;
+  .statusMeta {
+    justify-items: start;
+  }
+}
+
+@media (max-width: 640px) {
+  .hero h1 {
+    line-height: 0.98;
   }
 
-  .actions {
+  .heroEyebrowRow,
+  .sidebarHeader,
+  .sectionHeading,
+  .flowStageMeta {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .titleRow,
+  .filterRow,
+  .flowActions,
+  .agentCounts {
     width: 100%;
   }
 
-  .primaryButton,
-  .secondaryButton {
-    flex: 1;
+  .flowStageIndex {
+    width: 24px;
+    height: 24px;
   }
 }

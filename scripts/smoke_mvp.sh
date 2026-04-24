@@ -21,7 +21,7 @@ echo "[1/4] Health check"
 curl -fsS "${BASE_URL%/}/api/health"
 echo
 
-echo "[2/4] Create landing through Telegram webhook fallback"
+echo "[2/4] Queue landing through Telegram webhook fallback"
 curl -fsS -X POST "${BASE_URL%/}/api/telegram" \
   -H "Content-Type: application/json" \
   "${SECRET_HEADER[@]}" \
@@ -30,9 +30,13 @@ echo
 
 SLUG="$(printf '%s' "${TOPIC}" | tr '[:upper:]' '[:lower:]' | sed -E 's/[^a-z0-9]+/-/g; s/^-+|-+$//g')"
 
-echo "[3/4] Verify public landing"
-curl -fsSI "${BASE_URL%/}/landings/${SLUG}" | head -n 1
+echo "[3/4] Verify queue-aware health surface"
+curl -fsS "${BASE_URL%/}/api/health"
+echo
 
-echo "[4/4] Trigger live cycle"
+echo "[4/4] Queue live cycle"
 curl -fsS -X POST "${BASE_URL%/}/api/internal/live-cycle" "${CRON_SECRET_HEADER[@]}"
 echo
+
+echo "Queued slug: ${SLUG}"
+echo "Start the orchestrator and worker processes to complete publication."

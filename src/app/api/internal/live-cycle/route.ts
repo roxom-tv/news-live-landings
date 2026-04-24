@@ -18,9 +18,9 @@ export async function POST(request: NextRequest) {
     ok: true,
     count: results.length,
     results: results.map(result => ({
-      slug: result.landing.slug,
-      materiality: result.monitor?.materiality ?? "SKIPPED",
-      updated: result.updated
+      landingId: result.landingId,
+      runId: result.runId,
+      queued: true
     }))
   });
 }

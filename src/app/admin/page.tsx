@@ -14,10 +14,13 @@ export default async function AdminPage() {
   return (
     <main className={styles.admin}>
       <header className={styles.hero}>
-        <p>Agent Control</p>
-        <h1>Edit landing agents from the web.</h1>
+        <div className={styles.heroEyebrowRow}>
+          <p>Admin Backend</p>
+          <span className={styles.heroStatus}>{hasAccess ? "Open in local mode" : "Token required"}</span>
+        </div>
+        <h1>Control prompts, flow order, and live pipeline behavior from one screen.</h1>
         <span>
-          Agent Markdown and system prompts (including Roxom Editorial + Stitch Design System) are saved outside the compiled app and applied to new runs immediately.
+          Runtime Markdown, shared system prompts, and stage ordering are loaded from disk and applied to new runs immediately. This screen is for operational editing, not just prompt storage.
         </span>
       </header>
       <AdminAgentEditor initialToken="" initialAgents={initialAgents} initialFlows={initialFlows} />

@@ -4,10 +4,13 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
+    "build": "next build && npm run build:runtime",
+    "build:runtime": "tsc -p tsconfig.runtime.json",
     "start": "next start",
     "lint": "eslint .",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "orchestrator": "node dist-runtime/runtime/run-orchestrator.js",
+    "worker": "node dist-runtime/runtime/run-worker.js"
   },
   "dependencies": {
     "framer-motion": "^12.23.24",

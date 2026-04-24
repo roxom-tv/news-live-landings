@@ -43,6 +43,8 @@ export const getDb = (): DatabaseSync => {
   if (!sqlite) throw new Error("node:sqlite is unavailable. Run this app with Node 22+.");
   const { DatabaseSync: NodeDatabaseSync } = sqlite;
   database = new NodeDatabaseSync(file);
+  database.exec("PRAGMA journal_mode = WAL;");
+  database.exec("PRAGMA busy_timeout = 5000;");
   database.exec(`
     CREATE TABLE IF NOT EXISTS landings (
       id INTEGER PRIMARY KEY AUTOINCREMENT,

@@ -5,6 +5,8 @@ This app is the MVP runtime for Telegram-operated live news landings.
 ## What It Runs
 
 - Next.js App Router app.
+- Separate orchestrator process for pipeline advancement.
+- Separate worker process for agent step execution.
 - Public URLs under `https://diegodella.ar/landings`.
 - Telegram webhook at `/api/telegram` and alias `/landings/api/telegram`.
 - Live update cycle at `/api/internal/live-cycle` and alias `/landings/api/internal/live-cycle`.
@@ -13,13 +15,13 @@ This app is the MVP runtime for Telegram-operated live news landings.
 
 ## Coolify App
 
-Create one Coolify application from this repository/folder.
+Run three processes from this repository/folder that share the same `/data` volume:
 
-- Build pack: Dockerfile
-- Port: `3000`
-- Domain/path: `https://diegodella.ar/landings`
-- Persistent volume: mount host/storage volume to `/data`
-- Health check: `/api/health`
+- `web`: Dockerfile / port `3000` / health check `/api/health`
+- `orchestrator`: `npm run orchestrator`
+- `worker`: `npm run worker`
+
+All three must use the same environment and persistent volume mount to `/data`.
 
 If Coolify path routing cannot directly map `/landings/*`, route the full app through Cloudflare/Coolify and keep the app paths as-is. The app already exposes `/landings` and `/landings/[slug]`.
 
@@ -63,7 +65,9 @@ PUBLIC_BASE_URL=https://diegodella.ar API_PREFIX=/landings ./scripts/set_telegra
 
 ## Live Update Cycle
 
-The app starts an in-process scheduler through Next.js instrumentation. For extra reliability, add a Coolify scheduled task every 30 minutes:
+The web app scheduler now enqueues live update runs. The orchestrator and worker processes consume those runs asynchronously.
+
+Add a Coolify scheduled task every 30 minutes:
 
 ```bash
 curl -sS -X POST "https://diegodella.ar/api/internal/live-cycle" \
@@ -110,7 +114,9 @@ For production:
 BASE_URL=https://diegodella.ar ./scripts/smoke_mvp.sh
 ```
 
-Then send `/start_live bitcoin etf record inflows` in Telegram. Telegram should eventually return:
+Make sure `npm run orchestrator` and `npm run worker` are running.
+
+Then send `/start_live bitcoin etf record inflows` in Telegram. Telegram should first return a queued message and later:
    `FINAL URL READY | final_url=https://diegodella.ar/landings/bitcoin-etf-record-inflows`
 
 Open the final URL and trigger `/force_update bitcoin-etf-record-inflows`. Confirm no update is published for `NO_MATERIAL_CHANGE`, and important/critical updates pass Critic before publish.

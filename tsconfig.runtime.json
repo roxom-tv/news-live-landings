@@ -1,0 +1,23 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "noEmit": false,
+    "outDir": "dist-runtime",
+    "rootDir": "src",
+    "module": "commonjs",
+    "moduleResolution": "node",
+    "incremental": false,
+    "declaration": false,
+    "paths": {}
+  },
+  "include": [
+    "src/lib/**/*.ts",
+    "src/runtime/**/*.ts"
+  ],
+  "exclude": [
+    "src/app/**",
+    "src/components/**",
+    "**/*.tsx",
+    "node_modules"
+  ]
+}

@@ -1,26 +1,13 @@
 import { env } from "./config";
 import { isAutoRefreshEnabled } from "./db";
-import { runAllLiveCycles } from "./pipeline";
+import { enqueueScheduledLiveCycles } from "./pipeline-runtime";
 import { notifyTelegram } from "./telegram";
 
 let started = false;
 
 export const runScheduledLiveCycle = async () => {
   if (!isAutoRefreshEnabled()) return [];
-  const results = await runAllLiveCycles();
-  for (const result of results) {
-    if (result.updated && result.monitor) {
-      await notifyTelegram(
-        [
-          `LIVE UPDATE PUBLISHED | topic=${result.landing.topic}`,
-          `materiality=${result.monitor.materiality}`,
-          `what_changed=${result.monitor.summary.slice(0, 900)}`,
-          `final_url=${result.landing.finalUrl}`
-        ].join(" | ")
-      );
-    }
-  }
-  return results;
+  return enqueueScheduledLiveCycles();
 };
 
 export const startScheduler = () => {

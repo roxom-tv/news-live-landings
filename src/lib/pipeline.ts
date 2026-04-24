@@ -22,7 +22,7 @@ import { enforceTopLineLanding } from "./landing-quality";
 import { fallbackLanding } from "./agents/fallbacks";
 import { evaluateResearchTopicSupport } from "./topic-support";
 
-const retryableStatuses = new Set(["drafting", "critic_review", "blocked", "cancelled", "failed"]);
+export const retryableStatuses = new Set(["drafting", "critic_review", "blocked", "cancelled", "failed"]);
 const defaultCriticRepairAttempts = 3;
 type PipelineStageReporter = (stage: string, detail?: string) => Promise<void> | void;
 
@@ -30,7 +30,7 @@ const reportStage = async (reporter: PipelineStageReporter | undefined, stage: s
   if (reporter) await reporter(stage, detail);
 };
 
-const maxCriticRepairAttempts = () => {
+export const maxCriticRepairAttempts = () => {
   const configured = Number(process.env.CRITIC_REPAIR_ATTEMPTS);
   if (Number.isFinite(configured) && configured > 0) return Math.floor(configured);
   return defaultCriticRepairAttempts;
@@ -54,7 +54,7 @@ const issueOverlapRatio = (previous: Set<string>, next: Set<string>) => {
   return overlap / Math.max(previous.size, next.size);
 };
 
-const blockedUnsupportedTopicLanding = (input: {
+export const blockedUnsupportedTopicLanding = (input: {
   topic: string;
   slug: string;
   reason: string;
@@ -114,7 +114,7 @@ const blockedUnsupportedTopicLanding = (input: {
   });
 };
 
-const createOrRestartDraft = (input: { existing: LandingRecord | null; content: LandingContent; slug: string; topic: string }) => {
+export const createOrRestartDraft = (input: { existing: LandingRecord | null; content: LandingContent; slug: string; topic: string }) => {
   const content = {
     ...input.content,
     slug: input.slug,
@@ -129,7 +129,7 @@ const createOrRestartDraft = (input: { existing: LandingRecord | null; content: 
   return createLanding(content);
 };
 
-const safeBriefContent = (input: {
+export const safeBriefContent = (input: {
   base: LandingContent;
   writing: WriterOutput;
   slug: string;

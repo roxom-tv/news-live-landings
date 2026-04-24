@@ -22,7 +22,7 @@ const menuKeyboard = {
   is_persistent: true
 };
 
-const sendTelegramMessage = async (
+export const sendTelegramMessage = async (
   chatId: string | number,
   text: string,
   options: { menu?: boolean } = {}

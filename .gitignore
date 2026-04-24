@@ -9,3 +9,4 @@ out
 *.db-wal
 npm-debug.log*
 tsconfig.tsbuildinfo
+dist-runtime

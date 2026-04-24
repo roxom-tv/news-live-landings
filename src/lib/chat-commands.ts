@@ -1,7 +1,8 @@
-import { findLandingBySourceUrl, findLandingByTopic, getLandingBySlug, listLandings, summarizeTokenUsageSince, updateLandingStatus } from "./db";
+import { findLandingBySourceUrl, findLandingByTopic, getLandingBySlug, listLandings, updateLandingStatus } from "./db";
 import { discoverLiveTopic } from "./agents/discover";
 import { env } from "./config";
-import { publicFinalUrl, runLiveCycleForLanding, startLiveLanding } from "./pipeline";
+import { publicFinalUrl } from "./pipeline";
+import { enqueueCreateLandingRun, enqueueLiveUpdateRun, getPipelineStatusSummary } from "./pipeline-runtime";
 import { slugify } from "./slug";
 import type { LandingRecord } from "./types";
 
@@ -81,11 +82,6 @@ const findSlug = (value: string) => {
   return slugify(value);
 };
 
-const tokenUsageMessage = (startedAt: string) => {
-  const usage = summarizeTokenUsageSince(startedAt);
-  return `TOKENS | input=${usage.inputTokens} | output=${usage.outputTokens} | total=${usage.totalTokens}`;
-};
-
 const landingStatusMessage = (landing: LandingRecord) => {
   if (landing.status === "live") {
     return `FINAL URL READY | topic=${landing.topic} | final_url=${landing.finalUrl} | index_url=${env.landingsIndexUrl}`;
@@ -108,11 +104,6 @@ const landingStatusMessage = (landing: LandingRecord) => {
   return `IN PROGRESS | topic=${landing.topic} | slug=${landing.slug} | status=${landing.status}`;
 };
 
-const stageMessage = (topic: string, stage: string, detail?: string) => {
-  const suffix = detail ? ` | detail=${detail.slice(0, 500)}` : "";
-  return `STAGE | topic=${topic} | stage=${stage}${suffix}`;
-};
-
 const duplicateTopicMessage = (input: { topic: string; matchedTopic: string; slug: string; finalUrl: string; score: number }) =>
   [
     `TOPIC ALREADY COVERED | topic=${input.topic} | matched_topic=${input.matchedTopic} | slug=${input.slug} | final_url=${input.finalUrl} | score=${input.score.toFixed(2)}`,
@@ -127,8 +118,14 @@ const listLandingsMessage = () => {
   return [`LANDINGS INDEX: ${env.landingsIndexUrl}`, latest].filter(Boolean).join("\n");
 };
 
-const runDiscoveredLanding = async (sendMessage: ChatSendMessage, hint = "") => {
-  const startedAt = new Date().toISOString();
+const requestContextFrom = (context: ChatCommandContext) => ({
+  platform: context.platform,
+  actorId: context.actorId,
+  roomId: context.roomId,
+  threadId: context.threadId
+});
+
+const runDiscoveredLanding = async (context: ChatCommandContext, sendMessage: ChatSendMessage, hint = "") => {
   await sendMessage(`DISCOVERY STARTED${hint ? ` | hint=${hint}` : ""}`, { menu: true });
   const discovery = await discoverLiveTopic(hint);
   await sendMessage(
@@ -154,19 +151,20 @@ const runDiscoveredLanding = async (sendMessage: ChatSendMessage, hint = "") => 
       { menu: true }
     );
   }
-  const landing =
+  const result =
     existing && !retryableStatuses.has(existing.status)
-      ? existing
-      : await startLiveLanding(discovery.selectedTopic, (stage, detail) =>
-          sendMessage(stageMessage(discovery.selectedTopic, stage, detail), { menu: true })
-        );
-  await sendMessage(landingStatusMessage(landing), { menu: true });
-  await sendMessage(tokenUsageMessage(startedAt), { menu: true });
-  return { ok: true, slug: landing.slug, topic: discovery.selectedTopic };
+      ? { existing, run: null }
+      : await enqueueCreateLandingRun(discovery.selectedTopic, requestContextFrom(context));
+  if (result.existing) {
+    await sendMessage(landingStatusMessage(result.existing), { menu: true });
+    return { ok: true, slug: result.existing.slug, topic: discovery.selectedTopic };
+  }
+  if (!result.run) throw new Error("Unable to queue discovered topic.");
+  await sendMessage(`QUEUED | topic=${discovery.selectedTopic} | slug=${result.run.slug} | run_id=${result.run.id}`, { menu: true });
+  return { ok: true, slug: result.run.slug ?? slugify(discovery.selectedTopic), topic: discovery.selectedTopic };
 };
 
-const runTopicLanding = async (sendMessage: ChatSendMessage, topic: string) => {
-  const startedAt = new Date().toISOString();
+const runTopicLanding = async (context: ChatCommandContext, sendMessage: ChatSendMessage, topic: string) => {
   const exact = getLandingBySlug(slugify(topic));
   const topicMatch = findLandingByTopic(topic, {
     statuses: ["live", "paused", "critic_review", "drafting"],
@@ -185,17 +183,14 @@ const runTopicLanding = async (sendMessage: ChatSendMessage, topic: string) => {
       { menu: true }
     );
     await sendMessage(landingStatusMessage(existing), { menu: true });
-    await sendMessage(tokenUsageMessage(startedAt), { menu: true });
     return { ok: true, slug: existing.slug, existing: true };
   }
 
   await sendMessage(`TOPIC RECEIVED | topic=${topic}${existing ? " | mode=retry" : ""}`, { menu: true });
-  const landing = await startLiveLanding(topic, (stage, detail) =>
-    sendMessage(stageMessage(topic, stage, detail), { menu: true })
-  );
-  await sendMessage(landingStatusMessage(landing), { menu: true });
-  await sendMessage(tokenUsageMessage(startedAt), { menu: true });
-  return { ok: true, slug: landing.slug };
+  const result = await enqueueCreateLandingRun(topic, requestContextFrom(context));
+  if (!result.run) throw new Error("Unable to queue landing.");
+  await sendMessage(`QUEUED | topic=${topic} | slug=${result.run.slug} | run_id=${result.run.id}`, { menu: true });
+  return { ok: true, slug: result.run.slug ?? slugify(topic) };
 };
 
 const isOurLandingUrl = (url: string) => {
@@ -242,31 +237,29 @@ const handleReplyContext = async (context: ChatCommandContext, sendMessage: Chat
   const targetUrl = replyUrls[0];
   if (isOurLandingUrl(targetUrl)) {
     const slug = findSlug(slugFromLandingUrl(targetUrl));
-    const startedAt = new Date().toISOString();
-    const result = await runLiveCycleForLanding(slug);
-    await sendMessage(
-      `FORCE UPDATE | slug=${result.landing.slug} | materiality=${result.monitor?.materiality ?? "SKIPPED"} | updated=${result.updated}`,
-      { menu: true }
-    );
-    await sendMessage(tokenUsageMessage(startedAt), { menu: true });
-    return { ok: true, slug: result.landing.slug, mode: "force_update" };
+    const result = await enqueueLiveUpdateRun(slug, requestContextFrom(context));
+    if (!result.run) {
+      await sendMessage(`FORCE UPDATE | slug=${result.landing.slug} | materiality=SKIPPED | updated=false`, { menu: true });
+      return { ok: true, slug: result.landing.slug, mode: "force_update" };
+    }
+    await sendMessage(`QUEUED UPDATE | slug=${result.run.slug} | run_id=${result.run.id}`, { menu: true });
+    return { ok: true, slug: result.run.slug ?? slug, mode: "force_update" };
   }
 
   const matchedLanding = findLandingBySourceUrl(targetUrl);
   if (matchedLanding) {
-    const startedAt = new Date().toISOString();
-    const result = await runLiveCycleForLanding(matchedLanding.slug);
-    await sendMessage(
-      `SOURCE UPDATE | source_url=${targetUrl} | slug=${matchedLanding.slug} | materiality=${result.monitor?.materiality ?? "SKIPPED"} | updated=${result.updated}`,
-      { menu: true }
-    );
-    await sendMessage(tokenUsageMessage(startedAt), { menu: true });
+    const result = await enqueueLiveUpdateRun(matchedLanding.slug, requestContextFrom(context));
+    if (!result.run) {
+      await sendMessage(`SOURCE UPDATE | source_url=${targetUrl} | slug=${matchedLanding.slug} | materiality=SKIPPED | updated=false`, { menu: true });
+      return { ok: true, slug: matchedLanding.slug, mode: "source_update" };
+    }
+    await sendMessage(`QUEUED UPDATE | source_url=${targetUrl} | slug=${matchedLanding.slug} | run_id=${result.run.id}`, { menu: true });
     return { ok: true, slug: matchedLanding.slug, mode: "source_update" };
   }
 
   const inferredTopic = inferTopicFromReply(context.text, targetUrl);
   await sendMessage(`SOURCE CONTEXT | source_url=${targetUrl} | inferred_topic=${inferredTopic}`, { menu: true });
-  return runTopicLanding(sendMessage, inferredTopic);
+  return runTopicLanding(context, sendMessage, inferredTopic);
 };
 
 const normalizeCommand = (context: ChatCommandContext) => {
@@ -315,20 +308,35 @@ export const handleChatCommand = async (context: ChatCommandContext, sendMessage
     }
 
     if (command === "/discover_live") {
-      return runDiscoveredLanding(sendMessage, arg);
+      return runDiscoveredLanding(context, sendMessage, arg);
     }
 
     if (command === "/start_live") {
       if (!arg) throw new Error("Usage: start live <topic>");
-      return runTopicLanding(sendMessage, arg);
+      return runTopicLanding(context, sendMessage, arg);
     }
 
     if (command === "/status") {
       if (!arg) throw new Error("Usage: status <slug_or_topic>");
       const landing = getLandingBySlug(findSlug(arg));
-      if (!landing) throw new Error(`No landing found for ${arg}`);
+      if (landing) {
+        await sendMessage(
+          `STATUS | topic=${landing.topic} | slug=${landing.slug} | status=${landing.status} | final_url=${landing.finalUrl} | last_updated=${landing.updatedAt}`,
+          { menu: true }
+        );
+        const pipelineStatus = getPipelineStatusSummary(landing.slug);
+        if (pipelineStatus && pipelineStatus.run.status !== "succeeded") {
+          await sendMessage(
+            `RUN STATUS | run_id=${pipelineStatus.run.id} | status=${pipelineStatus.run.status} | latest_stage=${pipelineStatus.latestStep?.agentName ?? "none"} | step_status=${pipelineStatus.latestStep?.status ?? "none"}`,
+            { menu: true }
+          );
+        }
+        return { ok: true };
+      }
+      const pipelineStatus = getPipelineStatusSummary(arg);
+      if (!pipelineStatus) throw new Error(`No landing found for ${arg}`);
       await sendMessage(
-        `STATUS | topic=${landing.topic} | slug=${landing.slug} | status=${landing.status} | final_url=${landing.finalUrl} | last_updated=${landing.updatedAt}`,
+        `RUN STATUS | topic=${pipelineStatus.run.topic ?? arg} | slug=${pipelineStatus.run.slug ?? "pending"} | run_id=${pipelineStatus.run.id} | status=${pipelineStatus.run.status} | latest_stage=${pipelineStatus.latestStep?.agentName ?? "none"} | step_status=${pipelineStatus.latestStep?.status ?? "none"}`,
         { menu: true }
       );
       return { ok: true };
@@ -347,13 +355,23 @@ export const handleChatCommand = async (context: ChatCommandContext, sendMessage
         if (replyResult) return replyResult;
       }
       if (!arg) throw new Error("Usage: force update <slug_or_topic>");
-      const startedAt = new Date().toISOString();
-      const result = await runLiveCycleForLanding(findSlug(arg));
+      const result = await enqueueLiveUpdateRun(findSlug(arg), {
+        platform: context.platform,
+        actorId: context.actorId,
+        roomId: context.roomId,
+        threadId: context.threadId
+      });
+      if (!result.run) {
+        await sendMessage(
+          `FORCE UPDATE | slug=${result.landing.slug} | materiality=SKIPPED | updated=false`,
+          { menu: true }
+        );
+        return { ok: true };
+      }
       await sendMessage(
-        `FORCE UPDATE | slug=${result.landing.slug} | materiality=${result.monitor?.materiality ?? "SKIPPED"} | updated=${result.updated}`,
+        `QUEUED UPDATE | slug=${result.run.slug} | run_id=${result.run.id}`,
         { menu: true }
       );
-      await sendMessage(tokenUsageMessage(startedAt), { menu: true });
       return { ok: true };
     }
 
@@ -390,7 +408,7 @@ export const handleChatCommand = async (context: ChatCommandContext, sendMessage
       return { ok: true };
     }
 
-    return runTopicLanding(sendMessage, arg);
+    return runTopicLanding(context, sendMessage, arg);
   } catch (error) {
     const messageText = error instanceof Error ? error.message : String(error);
     await sendMessage(`BLOCKER | stage=${context.platform} | action_required=${messageText}`, { menu: true });
