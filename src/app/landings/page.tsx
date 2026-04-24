@@ -46,6 +46,7 @@ export default function LandingsIndexPage() {
     .at(-1);
   const intervalMinutes = env.liveCycleMinutes;
   const nextCycleAt = lastCycleAt ? new Date(new Date(lastCycleAt).getTime() + intervalMinutes * 60 * 1000) : null;
+  const canManageAutoRefresh = !env.adminToken && env.pipelineEnv !== "prod";
 
   return (
     <main className={styles.index}>
@@ -99,7 +100,11 @@ export default function LandingsIndexPage() {
               : "Automatic update checks are currently disabled."}
           </h2>
           <span>Operator channels only receive a message when an update is actually published.</span>
-          <AutoRefreshToggle initialEnabled={autoRefreshEnabled} />
+          {canManageAutoRefresh ? (
+            <AutoRefreshToggle initialEnabled={autoRefreshEnabled} />
+          ) : (
+            <small className={styles.monitorHint}>Auto-refresh control is restricted to authenticated admin requests.</small>
+          )}
         </div>
         <div className={styles.monitorStats}>
           <div>

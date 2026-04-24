@@ -7,8 +7,7 @@ export const requestHasAdminAccess = (request: NextRequest) => {
   if (!env.adminToken && env.pipelineEnv !== "prod") return true;
   const headerToken = request.headers.get("x-admin-token") ?? "";
   const bearerToken = request.headers.get("authorization")?.replace(/^Bearer\s+/i, "") ?? "";
-  const queryToken = request.nextUrl.searchParams.get("token") ?? "";
-  return [headerToken, bearerToken, queryToken].some(token => token && token === env.adminToken);
+  return [headerToken, bearerToken].some(token => token && token === env.adminToken);
 };
 
 export const unauthorizedAdminResponse = () =>
@@ -21,4 +20,3 @@ export const unauthorizedAdminResponse = () =>
     },
     { status: 401 }
   );
-

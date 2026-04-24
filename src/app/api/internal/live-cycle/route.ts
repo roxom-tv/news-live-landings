@@ -6,6 +6,9 @@ export const runtime = "nodejs";
 
 export async function POST(request: NextRequest) {
   const secret = request.headers.get("x-internal-cron-secret");
+  if (env.pipelineEnv === "prod" && !env.internalCronSecret) {
+    return NextResponse.json({ ok: false, error: "internal cron secret is not configured" }, { status: 503 });
+  }
   if (env.internalCronSecret && secret !== env.internalCronSecret) {
     return NextResponse.json({ ok: false, error: "unauthorized" }, { status: 401 });
   }

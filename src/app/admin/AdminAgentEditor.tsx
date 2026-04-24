@@ -38,8 +38,6 @@ type PipelineFlow = {
 
 type ApiState = "idle" | "loading" | "saving" | "error" | "saved";
 
-const storageKey = "news-live-admin-token";
-
 const adminApiPath = () => {
   if (typeof window === "undefined") return "/api/admin/agents";
   return window.location.pathname.startsWith("/landings/")
@@ -63,9 +61,7 @@ export function AdminAgentEditor({
   initialAgents: EditableAgent[];
   initialFlows: PipelineFlow[];
 }) {
-  const [token, setToken] = useState(() => (
-    initialToken || (typeof window !== "undefined" ? window.localStorage.getItem(storageKey) ?? "" : "")
-  ));
+  const [token, setToken] = useState(initialToken);
   const [agents, setAgents] = useState<EditableAgent[]>(initialAgents);
   const [flows, setFlows] = useState<PipelineFlow[]>(initialFlows);
   const [selectedId, setSelectedId] = useState<AgentId>(initialAgents[0]?.id ?? "writer");
@@ -106,8 +102,6 @@ export function AdminAgentEditor({
 
   const updateToken = (value: string) => {
     setToken(value);
-    if (value) window.localStorage.setItem(storageKey, value);
-    else window.localStorage.removeItem(storageKey);
   };
 
   const selectAgent = (agent: EditableAgent) => {

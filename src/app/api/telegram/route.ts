@@ -8,6 +8,9 @@ export const runtime = "nodejs";
 export async function POST(request: NextRequest) {
   recoverInterruptedRuns();
   const secret = request.headers.get("x-telegram-bot-api-secret-token");
+  if (env.pipelineEnv === "prod" && !env.telegramWebhookSecret) {
+    return NextResponse.json({ ok: false, error: "telegram webhook secret is not configured" }, { status: 503 });
+  }
   if (env.telegramWebhookSecret && secret !== env.telegramWebhookSecret) {
     return NextResponse.json({ ok: false, error: "unauthorized" }, { status: 401 });
   }

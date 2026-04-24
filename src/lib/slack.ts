@@ -36,7 +36,7 @@ const slackApi = async <T>(method: string, body: Record<string, unknown> | URLSe
 };
 
 export const verifySlackSignature = (rawBody: string, timestamp: string | null, signature: string | null) => {
-  if (!env.slackSigningSecret) return true;
+  if (!env.slackSigningSecret) return env.pipelineEnv !== "prod";
   if (!timestamp || !signature) return false;
 
   const ageSeconds = Math.abs(Math.floor(Date.now() / 1000) - Number(timestamp));
