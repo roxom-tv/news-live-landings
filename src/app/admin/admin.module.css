@@ -303,6 +303,72 @@
   padding-right: 4px;
 }
 
+.quickJumpRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 14px;
+}
+
+.quickJumpButton,
+.operationStage {
+  min-height: 34px;
+  padding: 0 12px;
+  color: rgba(255, 255, 255, 0.86);
+  font-family: var(--font-mono), monospace;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+  cursor: pointer;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 999px;
+}
+
+.quickJumpButton:disabled {
+  cursor: not-allowed;
+  opacity: 0.45;
+}
+
+.agentGroup {
+  display: grid;
+  gap: 10px;
+}
+
+.agentGroupHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.agentGroupHeader span,
+.agentGroupHeader small,
+.agentMetaRow small {
+  font-family: var(--font-mono), monospace;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+.agentGroupHeader span {
+  color: var(--tertiary);
+}
+
+.agentGroupHeader small,
+.agentMetaRow small {
+  color: rgba(255, 255, 255, 0.44);
+}
+
+.agentGroupList {
+  display: grid;
+  gap: 10px;
+}
+
 .agentButton,
 .activeAgent {
   display: grid;
@@ -322,6 +388,13 @@
   justify-content: space-between;
   align-items: center;
   gap: 12px;
+}
+
+.agentMetaRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
 }
 
 .agentButton span,
@@ -380,6 +453,26 @@
 .mainColumn {
   display: grid;
   gap: 20px;
+}
+
+.operationsStrip {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.operationCard {
+  padding: 16px;
+  background: linear-gradient(180deg, rgba(15, 18, 28, 0.88), rgba(26, 14, 36, 0.88));
+  border: 1px solid rgba(116, 209, 255, 0.16);
+  border-radius: 8px;
+}
+
+.operationStages {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 12px;
 }
 
 .flowGrid {
@@ -549,7 +642,7 @@
 
 .infoGrid {
   display: grid;
-  grid-template-columns: minmax(0, 1.6fr) repeat(2, minmax(0, 1fr));
+  grid-template-columns: minmax(0, 1.6fr) repeat(3, minmax(0, 1fr));
   gap: 14px;
 }
 
@@ -594,6 +687,40 @@
 
 .editorCardHeader p {
   margin: 10px 0 0;
+}
+
+.editorOutline {
+  min-width: min(340px, 100%);
+  max-width: 420px;
+  padding: 12px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 6px;
+}
+
+.outlineList {
+  display: grid;
+  gap: 6px;
+  margin-top: 10px;
+}
+
+.outlineItem {
+  display: block;
+  padding: 6px 8px;
+  color: rgba(255, 255, 255, 0.72);
+  font-family: var(--font-mono), monospace;
+  font-size: 11px;
+  line-height: 1.45;
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: 4px;
+}
+
+.outlineItem[data-level="2"] {
+  margin-left: 10px;
+}
+
+.outlineItem[data-level="3"] {
+  margin-left: 20px;
 }
 
 .textarea {
@@ -681,6 +808,7 @@
 
 @media (max-width: 1180px) {
   .overviewGrid,
+  .operationsStrip,
   .flowGrid,
   .infoGrid,
   .panelHeader {
@@ -702,6 +830,7 @@
   }
 
   .overviewGrid,
+  .operationsStrip,
   .editor,
   .flowGrid,
   .panelHeader,
@@ -725,6 +854,16 @@
 
   .statusMeta {
     justify-items: start;
+  }
+
+  .editorCardHeader {
+    flex-direction: column;
+  }
+
+  .editorOutline {
+    min-width: 0;
+    max-width: none;
+    width: 100%;
   }
 }
 

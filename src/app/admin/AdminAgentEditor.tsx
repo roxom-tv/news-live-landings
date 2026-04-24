@@ -38,6 +38,7 @@ type PipelineFlow = {
 };
 
 type ApiState = "idle" | "loading" | "saving" | "error" | "saved";
+type AgentGroup = EditableAgent["status"];
 
 const adminApiPath = () => {
   if (typeof window === "undefined") return "/api/admin/agents";
@@ -112,6 +113,15 @@ export function AdminAgentEditor({
       ].some(value => value.toLowerCase().includes(normalizedQuery));
     });
   }, [agents, query, statusFilter]);
+
+  const groupedAgents = useMemo(() => {
+    const order: AgentGroup[] = ["active", "system", "role-only"];
+    return order.map(group => ({
+      group,
+      label: statusLabel(group),
+      items: filteredAgents.filter(agent => agent.status === group)
+    }));
+  }, [filteredAgents]);
 
   const loadAgents = async (preferredAgentId?: AgentId) => {
     setState("loading");
@@ -254,6 +264,18 @@ export function AdminAgentEditor({
   const systemCount = agents.filter(agent => agent.status === "system").length;
   const roleOnlyCount = agents.filter(agent => agent.status === "role-only").length;
   const totalStages = flows.reduce((sum, flow) => sum + flow.stages.length, 0);
+  const selectedFlowUsage = selectedAgent
+    ? flows.filter(flow => flow.stages.includes(selectedAgent.id))
+    : [];
+  const markdownSections = draft
+    .split("\n")
+    .map((line, index) => {
+      const match = /^(#{1,3})\s+(.+)$/.exec(line.trim());
+      if (!match) return null;
+      return { level: match[1].length, title: match[2], line: index + 1 };
+    })
+    .filter((section): section is { level: number; title: string; line: number } => Boolean(section))
+    .slice(0, 10);
 
   return (
     <div className={styles.workspace}>
@@ -346,27 +368,56 @@ export function AdminAgentEditor({
               <span>{roleOnlyCount} deterministic</span>
             </div>
 
+            <div className={styles.quickJumpRow}>
+              {groupedAgents.map(({ group, label, items }) => (
+                <button
+                  className={styles.quickJumpButton}
+                  key={group}
+                  onClick={() => items[0] && selectAgent(items[0])}
+                  type="button"
+                  disabled={items.length === 0}
+                >
+                  {label} · {items.length}
+                </button>
+              ))}
+            </div>
+
             <div className={styles.agentList} role="list">
-              {filteredAgents.map(agent => {
-                const isActive = agent.id === selectedId;
-                const isDirty = isActive && unsavedChanges;
-                return (
-                  <button
-                    className={isActive ? styles.activeAgent : styles.agentButton}
-                    key={agent.id}
-                    onClick={() => selectAgent(agent)}
-                    type="button"
-                  >
-                    <div className={styles.agentButtonTop}>
-                      <span>{agent.label}</span>
-                      {isDirty ? <i className={styles.unsavedDot} aria-hidden="true" /> : null}
+              {groupedAgents.map(({ group, label, items }) => (
+                items.length > 0 ? (
+                  <section className={styles.agentGroup} key={group}>
+                    <div className={styles.agentGroupHeader}>
+                      <span>{label}</span>
+                      <small>{items.length}</small>
                     </div>
-                    <em>{statusLabel(agent.status)}</em>
-                    <small>{agent.role}</small>
-                    <small className={styles.agentPath}>{agent.mdPath}</small>
-                  </button>
-                );
-              })}
+                    <div className={styles.agentGroupList}>
+                      {items.map(agent => {
+                        const isActive = agent.id === selectedId;
+                        const isDirty = isActive && unsavedChanges;
+                        return (
+                          <button
+                            className={isActive ? styles.activeAgent : styles.agentButton}
+                            key={agent.id}
+                            onClick={() => selectAgent(agent)}
+                            type="button"
+                          >
+                            <div className={styles.agentButtonTop}>
+                              <span>{agent.label}</span>
+                              {isDirty ? <i className={styles.unsavedDot} aria-hidden="true" /> : null}
+                            </div>
+                            <div className={styles.agentMetaRow}>
+                              <em>{statusLabel(agent.status)}</em>
+                              <small>{agent.id}</small>
+                            </div>
+                            <small>{agent.role}</small>
+                            <small className={styles.agentPath}>{agent.mdPath}</small>
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </section>
+                ) : null
+              ))}
               {filteredAgents.length === 0 ? (
                 <div className={styles.emptyList}>No agents match this filter.</div>
               ) : null}
@@ -375,6 +426,29 @@ export function AdminAgentEditor({
         </aside>
 
         <div className={styles.mainColumn}>
+          <section className={styles.operationsStrip}>
+            <article className={styles.operationCard}>
+              <span className={styles.cardEyebrow}>Create Flow</span>
+              <div className={styles.operationStages}>
+                {flows.find(flow => flow.id === "create")?.stages.map(stage => (
+                  <button className={styles.operationStage} key={`ops-create-${stage}`} onClick={() => selectAgentById(stage)} type="button">
+                    {agentLabel(stage)}
+                  </button>
+                ))}
+              </div>
+            </article>
+            <article className={styles.operationCard}>
+              <span className={styles.cardEyebrow}>Live Flow</span>
+              <div className={styles.operationStages}>
+                {flows.find(flow => flow.id === "live")?.stages.map(stage => (
+                  <button className={styles.operationStage} key={`ops-live-${stage}`} onClick={() => selectAgentById(stage)} type="button">
+                    {agentLabel(stage)}
+                  </button>
+                ))}
+              </div>
+            </article>
+          </section>
+
           <section className={styles.pipelineSection}>
             <div className={styles.sectionHeading}>
               <div>
@@ -493,6 +567,14 @@ export function AdminAgentEditor({
                     <p>{draftWordCount} words</p>
                     <p>{draftLineCount} lines</p>
                   </article>
+                  <article className={styles.metaCard}>
+                    <span>Flow usage</span>
+                    {selectedFlowUsage.length > 0 ? (
+                      selectedFlowUsage.map(flow => <p key={`usage-${flow.id}`}>{flow.label}</p>)
+                    ) : (
+                      <p>Not used in current flow config</p>
+                    )}
+                  </article>
                 </div>
 
                 <div className={styles.editorCard}>
@@ -503,6 +585,18 @@ export function AdminAgentEditor({
                         Edit the operational instructions directly. Save writes to disk and affects future runs immediately.
                       </p>
                     </div>
+                    {markdownSections.length > 0 ? (
+                      <div className={styles.editorOutline}>
+                        <span className={styles.blockLabel}>Outline</span>
+                        <div className={styles.outlineList}>
+                          {markdownSections.map(section => (
+                            <span className={styles.outlineItem} data-level={section.level} key={`${section.line}-${section.title}`}>
+                              L{section.line} · {section.title}
+                            </span>
+                          ))}
+                        </div>
+                      </div>
+                    ) : null}
                   </div>
                   <textarea
                     className={styles.textarea}
